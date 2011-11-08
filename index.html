@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="resources/css/css.css" />
+		<script type="text/javascript" src="resources/js/lib/md5-min.js"></script>
+		<script type="text/javascript" src="resources/js/lib/mootools-core-1.3-full-nocompat-yc.js"></script>
+		<script type="text/javascript" src="resources/js/lib/moo-xml-helper.js"></script>
+		<script type="text/javascript" src="resources/ZeroClipboard/ZeroClipboard.js"></script>
+		<script type="text/javascript" src="resources/js/pagemodelbuilder.js"></script>
+	</head>
+	<body>
+		<h1 class="title">Entando Page Model Builder</h1>
+		
+		<div class="row">
+			<div class="col_s">
+				<form action="#config" id="addForm">
+					<h2 class="subtitle">Add Frame</h2>
+					<fieldset>
+						<p>
+							<label for="descr">Frame Description</label><br />
+							<input type="text" id="descr" />
+						</p>
+						<p>
+							<label for="how">How Many?</label><br />
+							<select id="how">
+								<option>1</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+								<option>6</option>
+								<option>7</option>
+								<option>8</option>
+								<option>9</option>
+								<option>10</option>
+								<option>11</option>
+								<option>12</option>
+								<option>13</option>
+								<option>14</option>
+								<option>15</option>
+								<option>16</option>
+								<option>17</option>
+								<option>18</option>
+								<option>19</option>
+								<option>20</option>
+							</select>
+						</p>
+						<p>
+							<label for="where">Where Insert this/these?</label><br />
+							<select id="where">
+								<option value="0">0</option>
+							</select>
+						</p>
+						<p class="buttons">
+							<button>Add</button>
+						</p>
+					</fieldset>	
+				</form>		
+			</div>
+			<div class="col_d">
+				<h2 class="subtitle">Load by direct input</h2>
+				<form action="#load_by_input">
+					<fieldset>
+						<p>
+							<label for="directInput">Xml</label><br />
+							<textarea id="directInput"></textarea>
+						</p>
+						<p class="buttons">
+							<button id="loadDirectInput">Load</button>						
+						</p>
+					</fieldset>
+				</form>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+			<div class="col_s">
+				<h2 class="subtitle">Xml Configuration</h2>
+				<div id="result_aux">
+					<p class="riempie">
+						&lt;frames&gt;
+					</p>
+					<div id="result"></div>		
+					<p class="riempie">
+						&lt;/frames&gt;
+					</p>					
+				</div>
+			</div>
+			<div class="col_d">
+				<h2 class="subtitle">JSP Code</h2>
+				<div id="jsp_aux">
+					<div id="jspcode">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" id="actions">
+			<p class="buttons">
+				<button id="updatepos">Refresh Positions</button>
+				<button id="copy_click_board">Copy To Clipboard</button>
+				<button id="generate_jsp">Generate JSP Code</button>
+			</p>
+			
+		</div>
+	</body>
+	
+</html>
