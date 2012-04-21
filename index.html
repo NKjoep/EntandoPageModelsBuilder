@@ -186,7 +186,13 @@
 						</dl>
 						<ul class="tabs-content  contained">
 							<li class="active" id="codeXMLTab">
-								<div class="panel">
+								<div class="row">
+									<p class="twelve columns text-left">
+										<span id="copy-xml" class="small green radius button">Copy to Clipboard</span>
+									</p>
+								</div>
+								<div class="row">
+								<div class="panel twelve colums">
 <pre>
 &lt;frames&gt;
 	&lt;frame pos="0"&gt;
@@ -206,7 +212,13 @@
 								</div>
 							</li>
 							<li id="codeJSPTab">
-								<div class="panel">
+								<div class="row">
+									<p class="twelve columns text-center">
+										<span id="copy-jsp" class="small green radius button">Copy to Clipboard</span>
+									</p>
+								</div>
+								<div class="row">
+								<div class="panel twelve colums">
 <pre>
 &lt;%-- Frame 0 --%&gt;
 	&lt;wp:show frame="0" /&gt;
@@ -223,7 +235,13 @@
 								</div>
 							</li>
 							<li id="codeSQLTab">
-								<div class="panel">
+								<div class="row">
+									<p class="twelve columns text-right">
+										<span id="copy-sql" class="small green radius button">Copy to Clipboard</span>
+									</p>
+								</div>
+								<div class="row">
+								<div class="panel twelve colums">
 <pre>
 INSERT INTO pagemodels (code, descr, frames, plugincode) 
 VALUES ('modelcode', 'Sample', '&lt;frames&gt;
@@ -246,41 +264,10 @@ VALUES ('modelcode', 'Sample', '&lt;frames&gt;
 						</ul>
 					</li>
 				</ul>
-
-<!--
-				<h3>Buttons</h3>
-				
-				<div class="row">
-					<div class="six columns">
-						<p><a href="#" class="small blue button">Small Blue Button</a></p>
-						<p><a href="#" class="blue button">Medium Blue Button</a></p>
-						<p><a href="#" class="large blue button">Large Blue Button</a></p>
-		
-						<p><a href="#" class="nice radius small blue button">Nice Blue Button</a></p>
-						<p><a href="#" class="nice radius blue button">Nice Blue Button</a></p>
-						<p><a href="#" class="nice radius large blue button">Nice Blue Button</a></p>
-					</div>
-					<div class="six columns">
-						<p><a href="#" class="small red button">Small Red Button</a></p>
-						<p><a href="#" class="green button">Medium Green Button</a></p>
-						<p><a href="#" class="large white button">Large White Button</a></p>
-		
-						<p><a href="#" class="nice radius small red button">Nice Red Button</a></p>
-						<p><a href="#" class="nice radius green button">Nice Green Button</a></p>
-						<p><a href="#" class="nice radius large white button">Nice White Button</a></p>
-					</div>
-				</div>
-	-->
 			</div>
-			
 		</div>
-
 	</div>
 	<!-- container -->
-
-
-
-
 	<!-- Included JS Files -->
 	<script src="foundation/javascripts/jquery.min.js"></script>
 	<!-- Combine and Compress These JS Files -->
@@ -291,6 +278,5 @@ VALUES ('modelcode', 'Sample', '&lt;frames&gt;
 	<script src="foundation/javascripts/jquery.tooltips.js"></script>
 	<!-- End Combine and Compress These JS Files -->
 	<script src="foundation/javascripts/app.js"></script>
-
 </body>
 </html>
