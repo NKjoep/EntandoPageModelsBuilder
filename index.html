@@ -36,8 +36,11 @@
 	<!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
-	
+
 	<link rel="stylesheet" href="resources/css/css.css" />
+	<script src="resources/js/lib/mootools-core.js"></script>
+	<script src="resources/js/lib/mootools-more.js"></script>
+	<script src="resources/js/entando-pagemodels-builder.js"></script>
 </head>
 <body>
 
@@ -193,7 +196,7 @@
 								</div>
 								<div class="row">
 								<div class="panel twelve colums">
-<pre>
+<pre class="brush: xml">
 &lt;frames&gt;
 	&lt;frame pos="0"&gt;
 		&lt;descr&gt;Frame 0&lt;/descr&gt;
@@ -242,7 +245,7 @@
 								</div>
 								<div class="row">
 								<div class="panel twelve colums">
-<pre>
+<pre class="brush: sql">
 INSERT INTO pagemodels (code, descr, frames, plugincode) 
 VALUES ('modelcode', 'Sample', '&lt;frames&gt;
 	&lt;frame pos="0"&gt;
