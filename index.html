@@ -1,107 +1,296 @@
-<html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="resources/css/css.css" />
-		<script type="text/javascript" src="resources/js/lib/md5-min.js"></script>
-		<script type="text/javascript" src="resources/js/lib/mootools-core-1.3-full-nocompat-yc.js"></script>
-		<script type="text/javascript" src="resources/js/lib/moo-xml-helper.js"></script>
-		<script type="text/javascript" src="resources/ZeroClipboard/ZeroClipboard.js"></script>
-		<script type="text/javascript" src="resources/js/pagemodelbuilder.js"></script>
-	</head>
-	<body>
-		<h1 class="title">Entando Page Model Builder</h1>
-		
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8" />
+
+	<!-- Set the viewport width to device width for mobile -->
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Welcome to Entando Page Models Builder</title>
+  
+	<!-- Included CSS Files -->
+	<!-- Combine and Compress These CSS Files -->
+	<link rel="stylesheet" href="foundation/stylesheets/globals.css">
+	<link rel="stylesheet" href="foundation/stylesheets/typography.css">
+	<link rel="stylesheet" href="foundation/stylesheets/grid.css">
+	<link rel="stylesheet" href="foundation/stylesheets/ui.css">
+	<link rel="stylesheet" href="foundation/stylesheets/forms.css">
+	<link rel="stylesheet" href="foundation/stylesheets/orbit.css">
+	<link rel="stylesheet" href="foundation/stylesheets/reveal.css">
+	<link rel="stylesheet" href="foundation/stylesheets/mobile.css">
+	<!-- End Combine and Compress These CSS Files -->
+	<link rel="stylesheet" href="foundation/stylesheets/app.css">
+
+	<!--[if lt IE 9]>
+		<link rel="stylesheet" href="foundation/stylesheets/ie.css">
+	<![endif]-->
+	
+	<script src="foundation/javascripts/modernizr.foundation.js"></script>
+
+	<!-- IE Fix for HTML5 Tags -->
+	<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<link rel="stylesheet" href="resources/css/css.css" />
+</head>
+<body>
+
+	<!-- container -->
+	<div class="container">
+
 		<div class="row">
-			<div class="col_s">
-				<form action="#config" id="addForm">
-					<h2 class="subtitle">Add Frame</h2>
-					<fieldset>
-						<p>
-							<label for="descr">Frame Description</label><br />
-							<input type="text" id="descr" />
-						</p>
-						<p>
-							<label for="how">How Many?</label><br />
-							<select id="how">
-								<option>1</option>
-								<option>2</option>
-								<option>3</option>
-								<option>4</option>
-								<option>5</option>
-								<option>6</option>
-								<option>7</option>
-								<option>8</option>
-								<option>9</option>
-								<option>10</option>
-								<option>11</option>
-								<option>12</option>
-								<option>13</option>
-								<option>14</option>
-								<option>15</option>
-								<option>16</option>
-								<option>17</option>
-								<option>18</option>
-								<option>19</option>
-								<option>20</option>
-							</select>
-						</p>
-						<p>
-							<label for="where">Where Insert this/these?</label><br />
-							<select id="where">
-								<option value="0">0</option>
-							</select>
-						</p>
-						<p class="buttons">
-							<button>Add</button>
-						</p>
-					</fieldset>	
-				</form>		
+			<div class="twelve columns">
+				<h2>Entando Page Models Builder</h2>
+				<p>The easy tool to create your Page Models in a click.</p>
+				<hr />
 			</div>
-			<div class="col_d">
-				<h2 class="subtitle">Load by direct input</h2>
-				<form action="#load_by_input">
-					<fieldset>
-						<p>
-							<label for="directInput">Xml</label><br />
-							<textarea id="directInput"></textarea>
-						</p>
-						<p class="buttons">
-							<button id="loadDirectInput">Load</button>						
-						</p>
-					</fieldset>
-				</form>
-			</div>
-			
 		</div>
-		
+
 		<div class="row">
-			<div class="col_s">
-				<h2 class="subtitle">Xml Configuration</h2>
-				<div id="result_aux">
-					<p class="riempie">
-						&lt;frames&gt;
-					</p>
-					<div id="result"></div>		
-					<p class="riempie">
-						&lt;/frames&gt;
-					</p>					
-				</div>
+			
+			<div class="four columns">			
+				<h2>Input</h2>
+
+				<dl class="tabs contained">
+					<dd><a href="#addFrames" class="active">Add Frames</a></dd>
+					<dd><a href="#parseXml">Parse Xml</a></dd>
+				</dl>
+
+				<ul class="tabs-content contained">
+					<li class="active" id="addFramesTab">
+							<form action="#config" id="addForm" class="custom">
+										<p>
+											<label for="descr">Frame Description</label>
+											<input type="text" id="descr" class="oversize input-text" />
+										</p>
+										<p>
+											<label for="how">How Many?</label>
+											<select id="how" style="display:none;">
+												<option>1</option>
+												<option>2</option>
+												<option>3</option>
+												<option>4</option>
+												<option>5</option>
+												<option>6</option>
+												<option>7</option>
+												<option>8</option>
+												<option>9</option>
+												<option>10</option>
+												<option>11</option>
+												<option>12</option>
+												<option>13</option>
+												<option>14</option>
+												<option>15</option>
+												<option>16</option>
+												<option>17</option>
+												<option>18</option>
+												<option>19</option>
+												<option>20</option>
+											</select>
+										</p>
+										<p>
+											<label for="where">Where Insert this/these?</label>
+											<select id="where">
+												<option value="0">at position 0</option>
+												<option value="0">at position 1</option>
+												<option value="0">at position 2</option>
+												<option value="0">at position 3</option>
+											</select>
+										</p>
+										<p class="buttons">
+											<button class="green nice button radius">Add</button>
+										</p>
+							</form>
+					</li>
+					<li id="parseXmlTab">
+						<form action="#load_by_input">
+								<p>
+									<label for="directInput">Xml Source</label>
+									<textarea id="directInput" rows="15"></textarea>
+								</p>
+								<p>
+									Note: the current data will be overridden.
+								</p>
+								<p class="buttons">
+									<button id="loadDirectInput" class="green nice button radius">Load</button>
+								</p>
+						</form>
+					</li>
+				</ul>
 			</div>
-			<div class="col_d">
-				<h2 class="subtitle">JSP Code</h2>
-				<div id="jsp_aux">
-					<div id="jspcode">
+
+
+			<div class="eight columns">
+				<h2>Output</h2>
+
+				<dl class="tabs contained">
+					<dd><a href="#preview" class="active">Preview</a></dd>
+					<dd><a href="#code">Generated Code</a></dd>
+				</dl>
+
+				<ul class="tabs-content contained">
+					<li class="active" id="previewTab">
+						<table width="100%">
+							<thead>
+								<tr>
+									<th class="one has-tip tip-top" title="Position">P</th>
+									<th>Description</th>
+									<th class="one icons has-tip tip-top" title="Move Up">U</th>
+									<th class="one icons has-tip tip-top" title="Move Down">D</th>
+									<th class="one icons has-tip tip-top" title="Delete">X</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="one">0</td>
+									<td>Sample Frame</td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="red radius label">x</span></td>
+								</tr>
+								<tr>
+									<td class="one">1</td>
+									<td>Frame 1</td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="red radius label">x</span></td>
+								</tr>
+								<tr>
+									<td class="one">2</td>
+									<td>Frame 2</td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="red radius label">x</span></td>
+								</tr>
+								<tr>
+									<td class="one">3</td>
+									<td>Frame 3</td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="green radius label">•</span></td>
+									<td class="one icons"><span class="red radius label">x</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</li>
+					<li id="codeTab">
+						<dl class="nice tabs green contained">
+							<dd><a href="#codeXML" class="active">XML</a></dd>
+							<dd><a href="#codeJSP">JSP</a></dd>
+							<dd><a href="#codeSQL">SQL</a></dd>
+						</dl>
+						<ul class="tabs-content  contained">
+							<li class="active" id="codeXMLTab">
+								<div class="panel">
+<pre>
+&lt;frames&gt;
+	&lt;frame pos="0"&gt;
+		&lt;descr&gt;Frame 0&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="1"&gt;
+		&lt;descr&gt;Frame 1&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="2"&gt;
+		&lt;descr&gt;Frame 2&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="3"&gt;
+		&lt;descr&gt;Frame 3&lt;/descr&gt;
+	&lt;/frame&gt;
+&lt;/frames&gt;
+</pre>
+								</div>
+							</li>
+							<li id="codeJSPTab">
+								<div class="panel">
+<pre>
+&lt;%-- Frame 0 --%&gt;
+	&lt;wp:show frame="0" /&gt;
+
+&lt;%--  Frame 1 --%&gt;
+	&lt;wp:show frame="1" /&gt;
+
+&lt;%--  Frame 2 --%&gt;
+	&lt;wp:show frame="2" /&gt;
+
+&lt;%--  Frame 3 --%&gt;
+	&lt;wp:show frame="3" /&gt;
+</pre>
+								</div>
+							</li>
+							<li id="codeSQLTab">
+								<div class="panel">
+<pre>
+INSERT INTO pagemodels (code, descr, frames, plugincode) 
+VALUES ('modelcode', 'Sample', '&lt;frames&gt;
+	&lt;frame pos="0"&gt;
+		&lt;descr&gt;Frame 0&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="1"&gt;
+		&lt;descr&gt;Frame 1&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="2"&gt;
+		&lt;descr&gt;Frame 2&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="3"&gt;
+		&lt;descr&gt;Frame 3&lt;/descr&gt;
+	&lt;/frame&gt;
+&lt;/frames&gt;', NULL);
+</pre>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+
+<!--
+				<h3>Buttons</h3>
+				
+				<div class="row">
+					<div class="six columns">
+						<p><a href="#" class="small blue button">Small Blue Button</a></p>
+						<p><a href="#" class="blue button">Medium Blue Button</a></p>
+						<p><a href="#" class="large blue button">Large Blue Button</a></p>
+		
+						<p><a href="#" class="nice radius small blue button">Nice Blue Button</a></p>
+						<p><a href="#" class="nice radius blue button">Nice Blue Button</a></p>
+						<p><a href="#" class="nice radius large blue button">Nice Blue Button</a></p>
+					</div>
+					<div class="six columns">
+						<p><a href="#" class="small red button">Small Red Button</a></p>
+						<p><a href="#" class="green button">Medium Green Button</a></p>
+						<p><a href="#" class="large white button">Large White Button</a></p>
+		
+						<p><a href="#" class="nice radius small red button">Nice Red Button</a></p>
+						<p><a href="#" class="nice radius green button">Nice Green Button</a></p>
+						<p><a href="#" class="nice radius large white button">Nice White Button</a></p>
 					</div>
 				</div>
+	-->
 			</div>
-		</div>
-		<div class="row" id="actions">
-			<p class="buttons">
-				<button id="updatepos">Refresh Positions</button>
-				<button id="copy_click_board">Copy To Clipboard</button>
-				<button id="generate_jsp">Generate JSP Code</button>
-			</p>
 			
 		</div>
-	</body>
-	
+
+	</div>
+	<!-- container -->
+
+
+
+
+	<!-- Included JS Files -->
+	<script src="foundation/javascripts/jquery.min.js"></script>
+	<!-- Combine and Compress These JS Files -->
+	<script src="foundation/javascripts/jquery.reveal.js"></script>
+	<script src="foundation/javascripts/jquery.orbit-1.4.0.js"></script>
+	<script src="foundation/javascripts/jquery.customforms.js"></script>
+	<script src="foundation/javascripts/jquery.placeholder.min.js"></script>
+	<script src="foundation/javascripts/jquery.tooltips.js"></script>
+	<!-- End Combine and Compress These JS Files -->
+	<script src="foundation/javascripts/app.js"></script>
+
+</body>
 </html>
