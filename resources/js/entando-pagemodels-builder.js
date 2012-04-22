@@ -20,10 +20,9 @@ var NewEntandoPageModelsBuilder = new Class({
 			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
 			tr: document.getElement(".preview-table").getElement(".preview-sample")
 		};
-		this.options.preview.tr.dispose();
-		this.frames = [];
 		this.prepareAddFrames();
 		this.prepareLoadXmlFrames();
+		this.preparePreview();
 	},
 	prepareAddFrames: function() {
 		this.options.addframes.form.addEvent("submit", function(ev){ev.preventDefault()});
@@ -38,6 +37,16 @@ var NewEntandoPageModelsBuilder = new Class({
 			ev.preventDefault();
 			this.insertFramesFromXml();
 		}.bind(this));
+	},
+	preparePreview: function() {
+		this.options.preview.tr.dispose();
+		this.options.preview.tbody.addEvent("click:relay(a.action-delete)", function(ev) {
+				ev.preventDefault();
+				var tr = ev.target.getParent("tr");
+				var pos = this.options.preview.tbody.getElements("tr").indexOf(tr);
+				ev.target.getParent("tr").destroy();
+				this.refreshPreviewPositions(pos);
+			}.bind(this));
 	},
 	insertFrames: function(wantedDescription, wantedPosition, wantedHowMany) {
 		var howmany, description, position;
@@ -107,6 +116,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		var start = 0;
 		if (startPosition!==undefined) {
 			start = startPosition;
+			//console.log("refreshing from: ",start);
 		}
 		var trs = this.options.preview.tbody.getElements("tr");
 		for (var i = start; i < trs.length; i++) {
