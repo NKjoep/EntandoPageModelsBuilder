@@ -67,14 +67,14 @@
 
 				<ul class="tabs-content contained">
 					<li class="active" id="addFramesTab">
-							<form action="#config" id="addForm" class="custom">
+							<form action="#addFrames" id="addForm" class="custom">
 										<p>
 											<label for="descr">Frame Description</label>
-											<input type="text" id="descr" class="oversize input-text" />
+											<input type="text" id="descr" name="description" class="oversize input-text" />
 										</p>
 										<p>
 											<label for="how">How Many?</label>
-											<select id="how" style="display:none;">
+											<select id="how" name="how-many" style="display:none;">
 												<option>1</option>
 												<option>2</option>
 												<option>3</option>
@@ -99,29 +99,26 @@
 										</p>
 										<p>
 											<label for="where">Where Insert this/these?</label>
-											<select id="where">
+											<select id="where" name="position" style="display:none;">
 												<option value="0">at position 0</option>
-												<option value="0">at position 1</option>
-												<option value="0">at position 2</option>
-												<option value="0">at position 3</option>
 											</select>
 										</p>
 										<p class="buttons">
-											<button class="green nice button radius">Add</button>
+											<button class="green nice button radius" name="action:add">Add</button>
 										</p>
 							</form>
 					</li>
 					<li id="parseXmlTab">
-						<form action="#load_by_input">
+						<form action="#loadXml">
 								<p>
 									<label for="directInput">Xml Source</label>
-									<textarea id="directInput" rows="15"></textarea>
+									<textarea id="directInput" rows="15" name="xml-source"></textarea>
 								</p>
 								<p>
 									Note: the current data will be overridden.
 								</p>
 								<p class="buttons">
-									<button id="loadDirectInput" class="green nice button radius">Load</button>
+									<button id="loadDirectInput" class="green nice button radius" name="action:load">Load</button>
 								</p>
 						</form>
 					</li>
@@ -139,7 +136,7 @@
 
 				<ul class="tabs-content contained">
 					<li class="active" id="previewTab">
-						<table width="100%">
+						<table width="100%" class="preview-table">
 							<thead>
 								<tr>
 									<th class="one has-tip tip-top" title="Position">P</th>
@@ -149,31 +146,10 @@
 									<th class="one icons has-tip tip-top" title="Delete">X</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
+							<tbody class="preview-tbody">
+								<tr class="preview-sample">
 									<td class="one">0</td>
 									<td>Sample Frame</td>
-									<td class="one icons"><span class="green radius label">•</span></td>
-									<td class="one icons"><span class="green radius label">•</span></td>
-									<td class="one icons"><span class="red radius label">x</span></td>
-								</tr>
-								<tr>
-									<td class="one">1</td>
-									<td>Frame 1</td>
-									<td class="one icons"><span class="green radius label">•</span></td>
-									<td class="one icons"><span class="green radius label">•</span></td>
-									<td class="one icons"><span class="red radius label">x</span></td>
-								</tr>
-								<tr>
-									<td class="one">2</td>
-									<td>Frame 2</td>
-									<td class="one icons"><span class="green radius label">•</span></td>
-									<td class="one icons"><span class="green radius label">•</span></td>
-									<td class="one icons"><span class="red radius label">x</span></td>
-								</tr>
-								<tr>
-									<td class="one">3</td>
-									<td>Frame 3</td>
 									<td class="one icons"><span class="green radius label">•</span></td>
 									<td class="one icons"><span class="green radius label">•</span></td>
 									<td class="one icons"><span class="red radius label">x</span></td>

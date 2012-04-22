@@ -1,10 +1,158 @@
+var NewEntandoPageModelsBuilder = new Class({
+	Implements: [Events, Options],
+	options: {},
+	initialize: function() {
+		this.setOptions();
+		this.options.addframes = {
+			form: document.getElement('form[action$="#addFrames"]'),
+			description: document.getElement('form[action$="#addFrames"]').getElement('[name="description"]'),
+			howmany: document.getElement('form[action$="#addFrames"]').getElement('[name="how-many"]'),
+			position: document.getElement('form[action$="#addFrames"]').getElement('[name="position"]'),
+			button: document.getElement('form[action$="#addFrames"]').getElement('[name="action:add"]')
+		};
+		this.options.loadxml = {
+			form: document.getElement('form[action$="#loadXml"]'),
+			xml: document.getElement('form[action$="#loadXml"]').getElement('[name="xml-source"]'),
+			button: document.getElement('form[action$="#loadXml"]').getElement('[name="action:load"]')
+		}
+		this.options.preview = {
+			table: document.getElement(".preview-table"), 
+			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
+			tr: document.getElement(".preview-table").getElement(".preview-sample")
+		};
+		this.options.preview.tr.dispose();
+		this.frames = [];
+		this.prepareAddFrames();
+		this.prepareLoadXmlFrames();
+	},
+	prepareAddFrames: function() {
+		this.options.addframes.form.addEvent("submit", function(ev){ev.preventDefault()});
+		this.options.addframes.button.addEvent("click",function(ev) {
+			ev.preventDefault();
+			this.insertFrames();
+		}.bind(this));
+	},
+	prepareLoadXmlFrames: function() {
+		this.options.loadxml.form.addEvent("submit", function(ev){ev.preventDefault()});
+		this.options.loadxml.button.addEvent("click",function(ev) {
+			ev.preventDefault();
+			this.insertFramesFromXml();
+		}.bind(this));
+	},
+	insertFrames: function(wantedDescription, wantedPosition, wantedHowMany) {
+		var howmany, description, position;
+		if (wantedDescription!==undefined&&wantedPosition!==undefined&&wantedHowMany!==undefined) {
+			howmany = wantedHowMany;
+			description = wantedDescription;
+			position = wantedPosition;
+		}
+		else {
+			howmany = new Number(this.options.addframes.howmany.get("value")).valueOf();
+			description = this.options.addframes.description.get("value").trim();
+			position = new Number(this.options.addframes.position.get("value")).valueOf();
+		}
+		var romanizedCounter = false;
+		if (howmany>1) {
+			romanizedCounter = true;
+		}
+		for (var index = 0; index<howmany; index++) {
+			this.createNewFrame(description,position,index, romanizedCounter);
+		}
+		this.refreshPreviewPositions(position+howmany);
+		this.refreshAddFramesPositions();
+	},
+	createNewFrame: function(description, position, index, romanizedCounter) {
+		description = romanizedCounter ? (description + " " +this.romanize(index+1).trim()) : description;
+		var tr = this.options.preview.tr.clone();
+		var tds = tr.getElements("td");
+		tds[0].set("text", position+index);
+		tds[1].set("text", description);
+		if (position+index == 0) {
+			tr.inject(this.options.preview.tbody, "top");
+		}
+		else {
+			var trs = this.options.preview.tbody.getElements("tr");
+			if (trs[position+index] != undefined) {
+				tr.inject(trs[position+index], "before");
+			}
+			else {
+				tr.inject(this.options.preview.tbody, "bottom");
+			}
+		}
+	},
+	insertFramesFromXml: function(wantedXml) {
+		var xml;
+		if (wantedXml!==undefined) {
+			xml = wantedXml;
+		}
+		else {
+			xml = this.options.loadxml.xml.get("value").trim();
+		}
+		console.log("parsingxml: ", xml);
+	},
+	romanize: function (num) {
+		if (!+num)
+		return false;
+		var	digits = String(+num).split(""),
+			key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+					"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+					"","I","II","III","IV","V","VI","VII","VIII","IX"],
+			roman = "",
+			i = 3;
+		while (i--)
+			roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+		return Array(+digits.join("") + 1).join("M") + roman;
+	},
+	refreshPreviewPositions: function(startPosition) {
+		var start = 0;
+		if (startPosition!==undefined) {
+			start = startPosition;
+		}
+		var trs = this.options.preview.tbody.getElements("tr");
+		for (var i = start; i < trs.length; i++) {
+			var current = trs[i].getElements("td");
+			current[0].set("text", i);
+		}
+	},
+	refreshAddFramesPositions: function() {
+		var howmany = this.options.preview.tbody.getElements("tr").length;
+		this.options.addframes.position.empty();
+		var custom = this.options.addframes.position.getNext('div[class="custom dropdown"]');
+		var customUl =custom.getElement('ul').empty();
+		for (var i = howmany; i >= 0; i--) {
+			var opt = new Element("option",{
+				"value": i,
+				"text": "at position " + i
+			}).inject(this.options.addframes.position);
+			var li = new Element("li", {
+				"text": "at position " + i
+			}).inject(customUl);
+			
+			if (i==howmany) {
+				opt.setProperty("selected", "selected");
+				li.addClass("selected");
+				custom.getElement(".current").set("text", "at position " + i);
+			}
+		}
+	}
+
+});
+
+window.addEvent("domready", function(){
+	new NewEntandoPageModelsBuilder();
+})
+
+
+
+
+
 var romanize = function (num) {
 	if (!+num)
 	return false;
 	var	digits = String(+num).split(""),
 		key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
-		       "","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
-		       "","I","II","III","IV","V","VI","VII","VIII","IX"],
+				"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+				"","I","II","III","IV","V","VI","VII","VIII","IX"],
 		roman = "",
 		i = 3;
 	while (i--)
@@ -405,7 +553,7 @@ var EntandoPageModelBuilder = new Class({
 });
 
 window.addEvent("domready",function(){
-	new EntandoPageModelBuilder();
+	//new EntandoPageModelBuilder();
 });
 
 var clip = null;
