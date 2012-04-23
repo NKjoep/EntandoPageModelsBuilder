@@ -12,19 +12,17 @@
 	<meta name="viewport" content="width=device-width" />
 
 	<title>Welcome to Entando Page Models Builder</title>
-  	
-  	<base href="https://raw.github.com/NKjoep/EntandoPageModelsBuilder/master/" />
-
+  
 	<!-- Included CSS Files -->
 	<!-- Combine and Compress These CSS Files -->
-	<link rel="stylesheet" href="foundation/stylesheets/globals.css" />
-	<link rel="stylesheet" href="foundation/stylesheets/typography.css" />
-	<link rel="stylesheet" href="foundation/stylesheets/grid.css"/>
-	<link rel="stylesheet" href="foundation/stylesheets/ui.css"/>
-	<link rel="stylesheet" href="foundation/stylesheets/forms.css"/>
-	<link rel="stylesheet" href="foundation/stylesheets/orbit.css"/>
-	<link rel="stylesheet" href="foundation/stylesheets/reveal.css"/>
-	<link rel="stylesheet" href="foundation/stylesheets/mobile.css"/>
+	<link rel="stylesheet" href="foundation/stylesheets/globals.css">
+	<link rel="stylesheet" href="foundation/stylesheets/typography.css">
+	<link rel="stylesheet" href="foundation/stylesheets/grid.css">
+	<link rel="stylesheet" href="foundation/stylesheets/ui.css">
+	<link rel="stylesheet" href="foundation/stylesheets/forms.css">
+	<link rel="stylesheet" href="foundation/stylesheets/orbit.css">
+	<link rel="stylesheet" href="foundation/stylesheets/reveal.css">
+	<link rel="stylesheet" href="foundation/stylesheets/mobile.css">
 	<!-- End Combine and Compress These CSS Files -->
 	<link rel="stylesheet" href="foundation/stylesheets/app.css">
 
@@ -175,6 +173,20 @@
 								<div class="row">
 								<div class="panel twelve colums">
 <pre class="brush: xml" id="xml-code">
+&lt;frames&gt;
+	&lt;frame pos="0"&gt;
+		&lt;descr&gt;Frame 0&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="1"&gt;
+		&lt;descr&gt;Frame 1&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="2"&gt;
+		&lt;descr&gt;Frame 2&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="3"&gt;
+		&lt;descr&gt;Frame 3&lt;/descr&gt;
+	&lt;/frame&gt;
+&lt;/frames&gt;
 </pre>
 								</div>
 							</li>
@@ -187,6 +199,17 @@
 								<div class="row">
 								<div class="panel twelve colums">
 <pre id="jsp-code">
+&lt;%-- Frame 0 --%&gt;
+	&lt;wp:show frame="0" /&gt;
+
+&lt;%--  Frame 1 --%&gt;
+	&lt;wp:show frame="1" /&gt;
+
+&lt;%--  Frame 2 --%&gt;
+	&lt;wp:show frame="2" /&gt;
+
+&lt;%--  Frame 3 --%&gt;
+	&lt;wp:show frame="3" /&gt;
 </pre>
 								</div>
 							</li>
@@ -199,6 +222,21 @@
 								<div class="row">
 								<div class="panel twelve colums">
 <pre class="brush: sql" id="sql-code">
+INSERT INTO pagemodels (code, descr, frames, plugincode) 
+VALUES ('modelcode', 'Sample', '&lt;frames&gt;
+	&lt;frame pos="0"&gt;
+		&lt;descr&gt;Frame 0&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="1"&gt;
+		&lt;descr&gt;Frame 1&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="2"&gt;
+		&lt;descr&gt;Frame 2&lt;/descr&gt;
+	&lt;/frame&gt;
+	&lt;frame pos="3"&gt;
+		&lt;descr&gt;Frame 3&lt;/descr&gt;
+	&lt;/frame&gt;
+&lt;/frames&gt;', NULL);
 </pre>
 								</div>
 							</li>

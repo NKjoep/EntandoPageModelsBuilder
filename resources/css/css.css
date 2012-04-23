@@ -1,0 +1,42 @@
+.nice.tabs.green dd a.active { 
+	border-top: 3px solid #7FAE00; 
+}
+
+th.one.icons, td.one.icons {
+	text-align: center;
+}
+
+.text-left {
+	text-align: left;
+}
+.text-center {
+	text-align: center;
+}
+.text-right {
+	text-align: right;
+}
+
+
+a.action-up:link,
+a.action-up:visited,
+a.action-down:link,
+a.action-down:visited,
+a.action-delete:link,
+a.action-delete:visited { 
+	color: #fff;
+}
+
+a.action-up:hover,
+a.action-down:hover {
+	background-color: transparent;
+	color: #7FAE00;
+}
+
+a.action-delete:hover {
+	background-color: transparent;
+	color: #E91C21;
+}
+
+.preview-tbody .description:hover {
+	cursor: pointer;
+}
