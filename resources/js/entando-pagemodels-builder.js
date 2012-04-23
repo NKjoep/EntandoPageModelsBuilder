@@ -46,7 +46,31 @@ var NewEntandoPageModelsBuilder = new Class({
 				var pos = this.options.preview.tbody.getElements("tr").indexOf(tr);
 				ev.target.getParent("tr").destroy();
 				this.refreshPreviewPositions(pos);
-			}.bind(this));
+		}.bind(this));
+		this.options.preview.tbody.addEvent("click:relay(a.action-up)", function(ev) {
+				ev.preventDefault();
+				var tr = ev.target.getParent("tr");
+				var trUp = tr.getPrevious();
+				if (trUp!=null) {
+					var trUpPos = trUp.getElements("td")[0].get("text");
+					var trPos = tr.getElements("td")[0].get("text");
+					trUp.getElements("td")[0].set("text", trPos);
+					tr.getElements("td")[0].set("text", trUpPos);
+					tr.inject(trUp, "before");
+				}
+		}.bind(this));
+		this.options.preview.tbody.addEvent("click:relay(a.action-down)", function(ev) {
+				ev.preventDefault();
+				var tr = ev.target.getParent("tr");
+				var trDown = tr.getNext();
+				if (trDown!=null) {
+					var trDownPos = trDown.getElements("td")[0].get("text");
+					var trPos = tr.getElements("td")[0].get("text");
+					trDown.getElements("td")[0].set("text", trPos);
+					tr.getElements("td")[0].set("text", trDownPos);
+					tr.inject(trDown, "after");
+				}
+		}.bind(this));
 	},
 	insertFrames: function(wantedDescription, wantedPosition, wantedHowMany) {
 		var howmany, description, position;
