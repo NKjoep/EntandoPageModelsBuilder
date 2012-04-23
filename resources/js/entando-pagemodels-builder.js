@@ -134,6 +134,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 		this.refreshPreviewPositions(position+howmany);
 		this.refreshAddFramesPositions();
+		this.refreshAll();
 	},
 	createNewFrame: function(description, position, index, romanizedCounter) {
 		description = romanizedCounter ? (description + " " +this.romanize(index+1).trim()) : description;
@@ -210,7 +211,50 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 	},
 	refreshAll: function() {
-		//console.log("refresh all...");
+		this.refreshXML();
+		this.refreshJSP();
+		this.refreshSQL();
+	},
+	refreshXML: function() {
+		var xml = document.id("xml-code");
+		var string = "<frames>\n\r";
+		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
+			var tds = tr.getElements("td");
+			var pos = tds[0].get("text");
+			var description = tds[1].get("text");
+			string = string + '\t<frame pos="'+pos+'">\n\r';
+			string = string + '\t\t<descr>'+description+'</descr>\n\r';
+			string = string + "\t</frame>\n\r";
+		});
+		string = string + "<frames>";
+		xml.set("text", string);
+	},
+	refreshJSP: function() {
+		var jsp = document.id("jsp-code");
+		var string = "";
+		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
+			var tds = tr.getElements("td");
+			var pos = tds[0].get("text");
+			var description = tds[1].get("text");
+			string = string + '<%-- '+description+' --%>\n\r';
+			string = string + '\t<wp:show frame="'+pos+'" />\n\r';
+		});
+		string = string + "<frames>";
+		jsp.set("text", string);	
+	},
+	refreshSQL: function() {
+		var sql = document.id("sql-code");
+		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('modelcode', 'Sample', '<frames>\n";
+		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
+			var tds = tr.getElements("td");
+			var pos = tds[0].get("text");
+			var description = tds[1].get("text");
+			string = string + '\t<frame pos="'+pos+'">\n\r';
+			string = string + '\t\t<descr>'+description.replace(/'/g,"\\'")+'</descr>\n\r';
+			string = string + "\t</frame>\n\r";
+		});
+		string = string + "</frames>', NULL);";
+		sql.set("text", string);	
 	}
 });
 
