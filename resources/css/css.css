@@ -36,3 +36,7 @@ a.action-delete:hover {
 	background-color: transparent;
 	color: #E91C21;
 }
+
+.preview-tbody .description:hover {
+	cursor: pointer;
+}

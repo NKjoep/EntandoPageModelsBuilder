@@ -112,6 +112,68 @@ var NewEntandoPageModelsBuilder = new Class({
 					}).dissolve();
 				}
 		}.bind(this));
+		this.options.preview.tbody.addEvent("dblclick:relay(.description)", function(ev) {
+			ev.stop();
+			ev.preventDefault();
+			ev.stopPropagation();
+			var td = ev.target;
+			var oldValue = td.get("text");
+			td.set("text", "");
+			td.empty();
+			var input = new Element("input", {
+				type: "text",
+				value: oldValue,
+				events: {
+					"keydown": function(ev) {
+						if (ev.key == 'enter') {
+							var newValue = this.get("value");
+							this.fireEvent("confirm", newValue);
+						}
+						else if(ev.key=='esc') {
+							this.fireEvent("rollback");
+						}
+					},
+					"confirm": function(value) {
+						this[0].empty();
+						this[0].set("text", value);
+						this[1].refreshAll();
+					}.bind([td, this, oldValue]),
+					"rollback": function() {
+						this[0].empty();
+						this[0].set("text", this[2]);
+					}.bind([td, this, oldValue])
+				}
+			}).inject(td);
+			input.focus();
+			input.select();
+			new Element("span",{
+				"class": "blue radius label",
+				"text": "save",
+				"styles" : {
+					"cursor": "pointer"
+				},
+				"events" : {
+					"click" : function(ev) {
+						ev.preventDefault();
+						this.fireEvent("confirm", this.get("value"));
+					}.bind(input)
+				}
+			}).inject(td);
+			td.appendText(" ");
+			new Element("span",{
+				"class": "red radius label",
+				"text": "discard",
+				"styles" : {
+					"cursor": "pointer"
+				},
+				"events" : {
+					"click" : function(ev) {
+						ev.preventDefault();
+						this.fireEvent("rollback");
+					}.bind(input)
+				}
+			}).inject(td);
+		}.bind(this));
 	},
 	insertFrames: function(wantedDescription, wantedPosition, wantedHowMany) {
 		var howmany, description, position;
