@@ -15,3 +15,24 @@ th.one.icons, td.one.icons {
 .text-right {
 	text-align: right;
 }
+
+
+a.action-up:link,
+a.action-up:visited,
+a.action-down:link,
+a.action-down:visited,
+a.action-delete:link,
+a.action-delete:visited { 
+	color: #fff;
+}
+
+a.action-up:hover,
+a.action-down:hover {
+	background-color: transparent;
+	color: #7FAE00;
+}
+
+a.action-delete:hover {
+	background-color: transparent;
+	color: #E91C21;
+}
