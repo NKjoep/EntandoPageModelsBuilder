@@ -200,6 +200,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	createNewFrame: function(description, position, index, romanizedCounter) {
 		description = romanizedCounter ? (description + " " +this.romanize(index+1).trim()) : description;
+		index = index !== undefined ? index : 0;
 		var tr = this.options.preview.tr.clone();
 		var tds = tr.getElements("td");
 		tds[0].set("text", position+index);
@@ -225,7 +226,59 @@ var NewEntandoPageModelsBuilder = new Class({
 		else {
 			xml = this.options.loadxml.xml.get("value").trim();
 		}
-		console.log("parsingxml: ", xml);
+		var rootFromString = function rootFromString(string) {
+			var root = null;
+			try {
+				var testIE = (Browser.ie || Browser.ie6 || Browser.ie7 || Browser.ie8);
+				if (undefined != testIE && testIE){
+					root = new ActiveXObject('Microsoft.XMLDOM');
+					root.async = false;
+					root.loadXML(string);
+				} else {
+					root = new DOMParser().parseFromString(string, 'text/xml');
+				}
+			}
+			catch(e) {
+				root = null;
+			}
+			return root;
+		};
+		var extractFrames = function(string) {
+			var obj = { "frames": [] };
+			var dom = rootFromString(string);
+			if (dom != null) {
+				var root = Slick.search(dom,"frames");
+				if (root.length > 0) {
+					obj = {};
+					for (var i = 0;i<root.length;i++){
+						var item = root[i];
+						var tag = item.get("tag");
+						var children = item.getChildren(); 
+						obj[tag] = [];
+						if (children.length > 0) {
+							for (var x=0;x<children.length;x++) {
+								var frame = children[x];
+								var framepos = frame.get("pos");
+								var descrEl = frame.getFirst("descr")
+								var descr = descrEl.innerText || descrEl.textContent;
+								obj[tag].push({
+									"pos": framepos,
+									"descr": descr
+								});
+							}
+						}
+					}
+				}
+			}
+			return obj;
+		};
+		this.options.preview.tbody.empty();
+		this.refreshAll();
+		var frames = extractFrames(xml).frames;
+		Array.each(frames, function(item, index){
+			this.createNewFrame(item.descr, new Number(item.pos).valueOf());
+		}.bind(this));
+		this.refreshAll();
 	},
 	romanize: function (num) {
 		if (!+num)
@@ -288,7 +341,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + '\t\t<descr>'+description+'</descr>\n\r';
 			string = string + "\t</frame>\n\r";
 		});
-		string = string + "<frames>";
+		string = string + "</frames>";
 		xml.set("text", string);
 	},
 	refreshJSP: function() {
@@ -301,7 +354,6 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + '<%-- '+description+' --%>\n\r';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\r';
 		});
-		string = string + "<frames>";
 		jsp.set("text", string);	
 	},
 	refreshSQL: function() {
