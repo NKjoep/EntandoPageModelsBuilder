@@ -58,29 +58,27 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (trUp!=null) {
 					var trUpPos = trUp.getElements("td")[0].get("text");
 					var trPos = tr.getElements("td")[0].get("text");
-					
 					new Fx.Reveal(tr, {
 						trUpPos: trUpPos,
 						trUp: trUp,
-						onChainComplete: function(tr){
+						refresh: this.refreshAll.bind(this),
+						onHide: function(tr){
 							var trUpPos = this.options.trUpPos;
 							var trUp = this.options.trUp;
 							tr.getElements("td")[0].set("text", trUpPos);
 							tr.inject(trUp, "before");
+							this.options.refresh();
 							this.reveal();
 						}
 					}).dissolve();
-
 					new Fx.Reveal(trUp, {
 						trPos: trPos,
-						onChainComplete: function(trUp){
+						onHide: function(trUp){
 							var trPos = this.options.trPos;
 							trUp.getElements("td")[0].set("text", trPos);
 							this.reveal();
 						}
 					}).dissolve();
-					//trUp.getElements("td")[0].set("text", trPos);
-					//tr.getElements("td")[0].set("text", trUpPos);
 				}
 		}.bind(this));
 		this.options.preview.tbody.addEvent("click:relay(a.action-down)", function(ev) {
@@ -90,9 +88,27 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (trDown!=null) {
 					var trDownPos = trDown.getElements("td")[0].get("text");
 					var trPos = tr.getElements("td")[0].get("text");
-					trDown.getElements("td")[0].set("text", trPos);
-					tr.getElements("td")[0].set("text", trDownPos);
-					tr.inject(trDown, "after");
+					new Fx.Reveal(tr, {
+						trDownPos: trDownPos,
+						trDown: trDown,
+						refresh: this.refreshAll.bind(this),
+						onHide: function(tr){
+							var trDownPos = this.options.trDownPos;
+							var trDown = this.options.trDown;
+							tr.getElements("td")[0].set("text", trDownPos);
+							tr.inject(trDown, "after");
+							this.options.refresh();
+							this.reveal();
+						}
+					}).dissolve();
+					new Fx.Reveal(trDown, {
+						trPos: trPos,
+						onHide: function(trDown){
+							var trPos = this.options.trPos;
+							trDown.getElements("td")[0].set("text", trPos);
+							this.reveal();
+						}
+					}).dissolve();
 				}
 		}.bind(this));
 	},
@@ -192,8 +208,10 @@ var NewEntandoPageModelsBuilder = new Class({
 				custom.getElement(".current").set("text", "at position " + i);
 			}
 		}
+	},
+	refreshAll: function() {
+		//console.log("refresh all...");
 	}
-
 });
 
 window.addEvent("domready", function(){
@@ -201,7 +219,13 @@ window.addEvent("domready", function(){
 })
 
 
-
+/*******************************************************************************/
+/*******************************************************************************/
+/*******************************************************************************/
+/*******************************************************************************/
+/*******************************************************************************/
+/*******************************************************************************/
+/*******************************************************************************/
 
 
 var romanize = function (num) {
@@ -266,7 +290,6 @@ var EntandoPageModelBuilderHelper = {
 				}
 			}
 		}
-		
 		return obj;
 	}
 	
