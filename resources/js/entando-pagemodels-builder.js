@@ -1,3 +1,4 @@
+
 var NewEntandoPageModelsBuilder = new Class({
 	Implements: [Events, Options],
 	options: {},
@@ -192,7 +193,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			romanizedCounter = true;
 		}
 		for (var index = 0; index<howmany; index++) {
-			this.createNewFrame(description,position,index, romanizedCounter);
+			this.createNewFrame(description!=null&&description.length>0?description:"frame",position,index, romanizedCounter);
 		}
 		this.refreshPreviewPositions(position+howmany);
 		this.refreshAddFramesPositions();

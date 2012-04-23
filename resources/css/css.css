@@ -40,3 +40,21 @@ a.action-delete:hover {
 .preview-tbody .description:hover {
 	cursor: pointer;
 }
+
+#xml-code, #jsp-code, #sql-code {
+	font-family: monospace;
+	font-weight: bold;
+	font-size: 14px;
+	overflow-x: scroll;
+}
+
+
+dl.contained.tabs dd a {
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-topright: 4px;
+	-moz-border-radius-bottomright: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-radius: 4px 4px 0px 0px;
+	border-radius: 4px 4px 0px 0px;
+	margin-right: 3px;
+}
