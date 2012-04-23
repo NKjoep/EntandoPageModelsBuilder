@@ -94,18 +94,24 @@ var NewEntandoPageModelsBuilder = new Class({
 						refresh: this.refreshAll.bind(this),
 						onHide: function(tr){
 							var trDownPos = this.options.trDownPos;
-							var trDown = this.options.trDown;
 							tr.getElements("td")[0].set("text", trDownPos);
+							this.reveal();
+							/*
+							var trDown = this.options.trDown;
 							tr.inject(trDown, "after");
 							this.options.refresh();
-							this.reveal();
+							*/
 						}
 					}).dissolve();
 					new Fx.Reveal(trDown, {
 						trPos: trPos,
+						tr: tr,
+						refresh: this.refreshAll.bind(this),
 						onHide: function(trDown){
 							var trPos = this.options.trPos;
 							trDown.getElements("td")[0].set("text", trPos);
+							trDown.inject(tr, "before");
+							this.options.refresh();
 							this.reveal();
 						}
 					}).dissolve();
@@ -201,7 +207,6 @@ var NewEntandoPageModelsBuilder = new Class({
 			var li = new Element("li", {
 				"text": "at position " + i
 			}).inject(customUl);
-			
 			if (i==howmany) {
 				opt.setProperty("selected", "selected");
 				li.addClass("selected");
