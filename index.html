@@ -41,6 +41,19 @@
 	<script src="resources/js/lib/mootools-core.js"></script>
 	<script src="resources/js/lib/mootools-more.js"></script>
 	<script src="resources/js/entando-pagemodels-builder.js"></script>
+	<script src="resources/ZeroClipboard/ZeroClipboard.js" />
+	<script type="text/javascript">
+		var clip = null;
+		window.addEvent("domready", function(){
+			ZeroClipboard.setMoviePath( 'http://nkjoep.github.com/EntandoPageModelsBuilder/resources/ZeroClipboard/ZeroClipboard10.swf' );
+    		clip = new ZeroClipboard.Client();
+    		clip.setHandCursor(true);
+    		document.id("copy-xml").addEvent("click", function(ev){
+    			clip.setText(this.get("text"));
+    			console.log("clip", clip);
+    		}.bind(document.id("xml-code")));
+		})	
+	</script>
 </head>
 <body>
 
@@ -171,22 +184,8 @@
 									</p>
 								</div>
 								<div class="row">
-								<div class="panel twelve colums">
+								<div class="panel">
 <pre class="brush: xml" id="xml-code">
-&lt;frames&gt;
-	&lt;frame pos="0"&gt;
-		&lt;descr&gt;Frame 0&lt;/descr&gt;
-	&lt;/frame&gt;
-	&lt;frame pos="1"&gt;
-		&lt;descr&gt;Frame 1&lt;/descr&gt;
-	&lt;/frame&gt;
-	&lt;frame pos="2"&gt;
-		&lt;descr&gt;Frame 2&lt;/descr&gt;
-	&lt;/frame&gt;
-	&lt;frame pos="3"&gt;
-		&lt;descr&gt;Frame 3&lt;/descr&gt;
-	&lt;/frame&gt;
-&lt;/frames&gt;
 </pre>
 								</div>
 							</li>
@@ -197,19 +196,8 @@
 									</p>
 								</div>
 								<div class="row">
-								<div class="panel twelve colums">
+								<div class="panel">
 <pre id="jsp-code">
-&lt;%-- Frame 0 --%&gt;
-	&lt;wp:show frame="0" /&gt;
-
-&lt;%--  Frame 1 --%&gt;
-	&lt;wp:show frame="1" /&gt;
-
-&lt;%--  Frame 2 --%&gt;
-	&lt;wp:show frame="2" /&gt;
-
-&lt;%--  Frame 3 --%&gt;
-	&lt;wp:show frame="3" /&gt;
 </pre>
 								</div>
 							</li>
@@ -220,23 +208,8 @@
 									</p>
 								</div>
 								<div class="row">
-								<div class="panel twelve colums">
+								<div class="panel">
 <pre class="brush: sql" id="sql-code">
-INSERT INTO pagemodels (code, descr, frames, plugincode) 
-VALUES ('modelcode', 'Sample', '&lt;frames&gt;
-	&lt;frame pos="0"&gt;
-		&lt;descr&gt;Frame 0&lt;/descr&gt;
-	&lt;/frame&gt;
-	&lt;frame pos="1"&gt;
-		&lt;descr&gt;Frame 1&lt;/descr&gt;
-	&lt;/frame&gt;
-	&lt;frame pos="2"&gt;
-		&lt;descr&gt;Frame 2&lt;/descr&gt;
-	&lt;/frame&gt;
-	&lt;frame pos="3"&gt;
-		&lt;descr&gt;Frame 3&lt;/descr&gt;
-	&lt;/frame&gt;
-&lt;/frames&gt;', NULL);
 </pre>
 								</div>
 							</li>
