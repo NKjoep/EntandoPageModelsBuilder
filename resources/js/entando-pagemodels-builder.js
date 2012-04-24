@@ -51,6 +51,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				this.loadStoredModel(ev.target.getParent().retrieve("code"));
 			}.bind(this));
 			document.id("saved-models").addEvent("click:relay(.delete-model)", function(ev) {
+				ev.preventDefault();
 				this.unStoreModel(ev.target.getParent().retrieve("code"));
 			}.bind(this));
 		}
@@ -77,26 +78,35 @@ var NewEntandoPageModelsBuilder = new Class({
 				<span href="">Title / Code</a>
 				<a href="" class="close delete-model">&times;</a>
 			</div>*/
-			var div = new Element("div", {
-				"class": "alert-box success"
-			});
-			div.inject(document.id("saved-models"))
-			div.store("code", item.code);
-			new Element("span", {
-				"class": "load-model",
-				href: "",
-				text: item.title + " / "+item.code,
-				title: "Load "+ item.title + " / "+item.code,
-				styles: {
-					cursor: "pointer"
+			var container = document.id("saved-models");
+			var previous = container.getElement("#model_"+item.code);
+				var div = new Element("div", {
+					"class": "alert-box success",
+					"id": "model_"+item.code
+				});
+				if (previous!=null) {
+					div.inject(previous, "after");
+					previous.destroy();
 				}
-			}).inject(div);
-			new Element("a", {
-				href: "",
-				"class": "close delete-model",
-				"html": "&times;",
-				"title": "Delete "+ item.title + " / "+item.code
-			}).inject(div);
+				else {
+					div.inject(container);
+				}
+				div.store("code", item.code);
+				new Element("span", {
+					"class": "load-model",
+					href: "",
+					text: item.title + " / "+item.code,
+					title: "Load "+ item.title + " / "+item.code,
+					styles: {
+						cursor: "pointer"
+					}
+				}).inject(div);
+				new Element("a", {
+					href: "",
+					"class": "close delete-model",
+					"html": "&times;",
+					"title": "Delete "+ item.title + " / "+item.code
+				}).inject(div);
 	},
 	loadStoredModel: function(code) {
 		var modelObj = this.storedModels[code];
