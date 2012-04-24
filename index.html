@@ -83,7 +83,6 @@
 		<div class="row">
 			<div class="four columns">
 				<div class="row">
-					<h2>Input</h2>
 					<dl class="tabs contained">
 						<dd><a href="#addFrames" class="active">Add Frames</a></dd>
 						<dd><a href="#parseXml">Parse Xml</a></dd>
@@ -156,16 +155,13 @@
 					<h3>Saved Page Models</h3>
 				</div>
 			</div>
-
-
 			<div class="eight columns">
-				<h2>Output</h2>
-
 				<dl class="tabs contained">
-					<dd><a href="#preview" class="active">Preview</a></dd>
-					<dd><a href="#code">Generated Code</a></dd>
+					<dd><a href="#preview" class="active">Structure Preview</a></dd>
+					<dd><a href="#codeXML" class="active">XML Code</a></dd>
+					<dd><a href="#codeJSP">JSP Code</a></dd>
+					<dd><a href="#codeSQL">SQL Code</a></dd>
 				</dl>
-
 				<ul class="tabs-content contained">
 					<li class="active" id="previewTab">
 						<table width="100%" class="preview-table">
@@ -197,50 +193,23 @@
 							Note: drag and drop the rows to sort them. Double click to edit the descriptions.
 						</p>
 					</li>
-					<li id="codeTab">
-						<dl class="nice tabs green contained">
-							<dd><a href="#codeXML" class="active">XML</a></dd>
-							<dd><a href="#codeJSP">JSP</a></dd>
-							<dd><a href="#codeSQL">SQL</a></dd>
-						</dl>
-						<ul class="tabs-content  contained">
-							<li class="active" id="codeXMLTab">
-								<div class="row">
-									<p class="twelve columns text-left">
-										<span id="copy-xml" class="small green radius button">Copy to Clipboard</span>
-									</p>
-								</div>
-								<div class="row">
-								<div class="panel">
+					<li id="codeXMLTab">
+						<div class="panel">
 <pre class="brush: xml" id="xml-code">
 </pre>
-								</div>
-							</li>
-							<li id="codeJSPTab">
-								<div class="row">
-									<p class="twelve columns text-center">
-										<span id="copy-jsp" class="small green radius button">Copy to Clipboard</span>
-									</p>
-								</div>
-								<div class="row">
-								<div class="panel">
+						</div>
+					</li>
+					<li id="codeJSPTab">
+						<div class="panel">
 <pre class="brush: xml" id="jsp-code">
 </pre>
-								</div>
-							</li>
-							<li id="codeSQLTab">
-								<div class="row">
-									<p class="twelve columns text-right">
-										<span id="copy-sql" class="small green radius button">Copy to Clipboard</span>
-									</p>
-								</div>
-								<div class="row">
-								<div class="panel">
+						</div>
+					</li>
+					<li id="codeSQLTab">
+						<div class="panel">
 <pre class="brush: sql" id="sql-code">
 </pre>
-								</div>
-							</li>
-						</ul>
+						</div>
 					</li>
 				</ul>
 			</div>

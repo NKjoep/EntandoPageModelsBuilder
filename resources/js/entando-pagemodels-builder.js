@@ -45,10 +45,13 @@ var NewEntandoPageModelsBuilder = new Class({
 				ev.preventDefault();
 				this.storeModel();
 			}.bind(this));
-			this.restoreModels();
-			document.id("saved-models").addEvent("click:relay(a.load-model)", function(ev) {
-				//console.log("clicked");
-				//this.loadStoredModel(ev.target.getParent().retrieve("code"));
+			this.restoreModelsList();
+			document.id("saved-models").addEvent("click:relay(.load-model)", function(ev) {
+				ev.preventDefault();
+				this.loadStoredModel(ev.target.getParent().retrieve("code"));
+			}.bind(this));
+			document.id("saved-models").addEvent("click:relay(.delete-model)", function(ev) {
+				this.unStoreModel(ev.target.getParent().retrieve("code"));
 			}.bind(this));
 		}
 		else {
@@ -62,27 +65,38 @@ var NewEntandoPageModelsBuilder = new Class({
 			xml: document.id("xml-code").get("text")
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
+		this.createSavedModelButtonLoader(this.storedModels[this.code]);
 	},
-	restoreModels: function() {
+	restoreModelsList: function() {
 		Object.each(this.storedModels, function(item){
+			this.createSavedModelButtonLoader(item);
+		}.bind(this));
+	},
+	createSavedModelButtonLoader: function(item) {
 			/*<div class="alert-box success">
-				<a href="#load-model-code">Title / Code</a>
-				<a href="" class="close">&times;</a>
+				<span href="">Title / Code</a>
+				<a href="" class="close delete-model">&times;</a>
 			</div>*/
 			var div = new Element("div", {
 				"class": "alert-box success"
-			}).inject(document.id("saved-models")).store("code", item.code);
-			new Element("a", {
+			});
+			div.inject(document.id("saved-models"))
+			div.store("code", item.code);
+			new Element("span", {
 				"class": "load-model",
-				href: "#load-model-"+item.code,
-				text: item.title + " / "+item.code
+				href: "",
+				text: item.title + " / "+item.code,
+				title: "Load "+ item.title + " / "+item.code,
+				styles: {
+					cursor: "pointer"
+				}
 			}).inject(div);
 			new Element("a", {
 				href: "",
-				"class": "close",
-				"html": "&times;"
+				"class": "close delete-model",
+				"html": "&times;",
+				"title": "Delete "+ item.title + " / "+item.code
 			}).inject(div);
-		});
 	},
 	loadStoredModel: function(code) {
 		var modelObj = this.storedModels[code];
@@ -90,8 +104,14 @@ var NewEntandoPageModelsBuilder = new Class({
 			this.insertFramesFromXml(modelObj.xml);
 			document.id("title").set("value", modelObj.title);
 			document.id("code").set("value", modelObj.code);
+			this.title=modelObj.title;
+			this.code=modelObj.code;
 			this.refreshAll();
 		}
+	},
+	unStoreModel: function(code) {
+		delete this.storedModels[code];
+		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
 	},
 	setupMetaData: function() {
 		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : "Sample Model";
@@ -108,13 +128,15 @@ var NewEntandoPageModelsBuilder = new Class({
 			}
 		}.bind(this));
 		document.id("code").addEvent("change", function(ev){
-			this.code = ev.target.get("value");
+			this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
+			ev.target.set("value",this.code);
 			this.refreshSQL();
 		}.bind(this));
 		document.id("code").addEvent("keydown", function(ev){
 			if(ev.key == 'enter'){
 				ev.preventDefault();
-				this.code = ev.target.get("value");
+				this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
+				ev.target.set("value",this.code);
 				this.refreshSQL();
 			}
 		}.bind(this));
@@ -470,7 +492,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshXML();
 		this.refreshJSP();
 		this.refreshSQL();
-		this.sortable.detach();
+		if (this.sortable!==null) { this.sortable.detach(); }
 		this.setupSortable();
 	},
 	refreshXML: function() {
@@ -501,7 +523,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('modelcode', '"+this.title+"', '<frames>\n";
+		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
