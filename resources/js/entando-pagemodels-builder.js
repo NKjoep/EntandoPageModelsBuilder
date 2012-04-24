@@ -1,4 +1,3 @@
-
 var NewEntandoPageModelsBuilder = new Class({
 	Implements: [Events, Options],
 	options: {},
@@ -21,9 +20,126 @@ var NewEntandoPageModelsBuilder = new Class({
 			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
 			tr: document.getElement(".preview-table").getElement(".preview-sample")
 		};
+		this.setupMetaData();
+		this.setupStorage();
 		this.prepareAddFrames();
 		this.prepareLoadXmlFrames();
 		this.preparePreview();
+		this.prepareAddSingleFrame();
+		this.sortable = null;
+	},
+	setupStorage: function() {
+		if (window.localStorage!==undefined) {
+			this.storedModels = window.localStorage.getItem("entando-page-models-builder-config");
+			document.getElements(".localStorage-disabled").removeClass("localStorage-disabled");
+			if (this.storedModels!==undefined && this.storedModels!==null && this.storedModels.length >0) {
+				this.storedModels = JSON.decode(this.storedModels);
+				if (!(typeOf(this.storedModels) == 'object')) {
+					this.storedModels = {};
+				}
+			}
+			else {
+				this.storedModels = {};
+			}
+			document.id("save").addEvent("click", function(ev){
+				ev.preventDefault();
+				this.storeModel();
+			}.bind(this));
+			this.restoreModelsList();
+			document.id("saved-models").addEvent("click:relay(.load-model)", function(ev) {
+				ev.preventDefault();
+				this.loadStoredModel(ev.target.getParent().retrieve("code"));
+			}.bind(this));
+			document.id("saved-models").addEvent("click:relay(.delete-model)", function(ev) {
+				this.unStoreModel(ev.target.getParent().retrieve("code"));
+			}.bind(this));
+		}
+		else {
+			document.getElements(".localStorage-disabled").destroy();
+		}
+	},
+	storeModel: function() {
+		this.storedModels[this.code] = {
+			title: this.title,
+			code: this.code,
+			xml: document.id("xml-code").get("text")
+		};
+		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
+		this.createSavedModelButtonLoader(this.storedModels[this.code]);
+	},
+	restoreModelsList: function() {
+		Object.each(this.storedModels, function(item){
+			this.createSavedModelButtonLoader(item);
+		}.bind(this));
+	},
+	createSavedModelButtonLoader: function(item) {
+			/*<div class="alert-box success">
+				<span href="">Title / Code</a>
+				<a href="" class="close delete-model">&times;</a>
+			</div>*/
+			var div = new Element("div", {
+				"class": "alert-box success"
+			});
+			div.inject(document.id("saved-models"))
+			div.store("code", item.code);
+			new Element("span", {
+				"class": "load-model",
+				href: "",
+				text: item.title + " / "+item.code,
+				title: "Load "+ item.title + " / "+item.code,
+				styles: {
+					cursor: "pointer"
+				}
+			}).inject(div);
+			new Element("a", {
+				href: "",
+				"class": "close delete-model",
+				"html": "&times;",
+				"title": "Delete "+ item.title + " / "+item.code
+			}).inject(div);
+	},
+	loadStoredModel: function(code) {
+		var modelObj = this.storedModels[code];
+		if (modelObj!==undefined) {
+			this.insertFramesFromXml(modelObj.xml);
+			document.id("title").set("value", modelObj.title);
+			document.id("code").set("value", modelObj.code);
+			this.title=modelObj.title;
+			this.code=modelObj.code;
+			this.refreshAll();
+		}
+	},
+	unStoreModel: function(code) {
+		delete this.storedModels[code];
+		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
+	},
+	setupMetaData: function() {
+		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : "Sample Model";
+		this.code = document.id("code").get("value") != null && document.id("code").get("value") != "" ? document.id("code").get("value") : "samplemodel";
+		document.id("title").addEvent("change", function(ev){
+			this.title = ev.target.get("value");
+			this.refreshSQL();
+		}.bind(this));
+		document.id("title").addEvent("keydown", function(ev){
+			if(ev.key == 'enter'){
+				ev.preventDefault();
+				this.title = ev.target.get("value");
+				this.refreshSQL();
+			}
+		}.bind(this));
+		document.id("code").addEvent("change", function(ev){
+			this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
+			ev.target.set("value",this.code);
+			this.refreshSQL();
+		}.bind(this));
+		document.id("code").addEvent("keydown", function(ev){
+			if(ev.key == 'enter'){
+				ev.preventDefault();
+				this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
+				ev.target.set("value",this.code);
+				this.refreshSQL();
+			}
+		}.bind(this));
 	},
 	prepareAddFrames: function() {
 		this.options.addframes.form.addEvent("submit", function(ev){ev.preventDefault()});
@@ -47,9 +163,11 @@ var NewEntandoPageModelsBuilder = new Class({
 				var pos = this.options.preview.tbody.getElements("tr").indexOf(tr);
 				tr.dissolve({
 					onComplete: function(){
+						this[0].sortable.removeItems(this[1]);
 						this[1].destroy();
-						this[0].refreshPreviewPositions(pos);
-					}.bind([this, tr])
+						this[0].refreshPreviewPositions(this[2]);
+						this[0].refreshAll();
+					}.bind([this, tr, pos])
 				});
 		}.bind(this));
 		this.options.preview.tbody.addEvent("click:relay(a.action-up)", function(ev) {
@@ -114,66 +232,85 @@ var NewEntandoPageModelsBuilder = new Class({
 				}
 		}.bind(this));
 		this.options.preview.tbody.addEvent("dblclick:relay(.description)", function(ev) {
-			ev.stop();
 			ev.preventDefault();
 			ev.stopPropagation();
 			var td = ev.target;
-			var oldValue = td.get("text");
-			td.set("text", "");
-			td.empty();
-			var input = new Element("input", {
-				type: "text",
-				value: oldValue,
-				events: {
-					"keydown": function(ev) {
-						if (ev.key == 'enter') {
-							var newValue = this.get("value");
-							this.fireEvent("confirm", newValue);
-						}
-						else if(ev.key=='esc') {
-							this.fireEvent("rollback");
-						}
+			ev.stop();
+			if (td.retrieve("edit-status")==null ||td.retrieve("edit-status")==undefined) {
+				td.store("edit-status", true);
+				var oldValue = td.get("text");
+				td.set("text", "");
+				td.empty();
+				var input = new Element("input", {
+					type: "text",
+					value: oldValue,
+					events: {
+						"keydown": function(ev) {
+							if (ev.key == 'enter') {
+								var newValue = this.get("value");
+								this.fireEvent("confirm", newValue);
+							}
+							else if(ev.key=='esc') {
+								this.fireEvent("rollback");
+							}
+						},
+						"confirm": function(value) {
+							this[0].empty();
+							this[0].set("text", value);
+							this[1].refreshAll();
+							this[0].store("edit-status", null);
+						}.bind([td, this, oldValue]),
+						"rollback": function() {
+							this[0].empty();
+							this[0].set("text", this[2]);
+							this[0].store("edit-status", null);
+						}.bind([td, this, oldValue])
+					}
+				}).inject(td);
+				input.focus();
+				new Element("span",{
+					"class": "blue radius label",
+					"text": "save",
+					"styles" : {
+						"cursor": "pointer"
 					},
-					"confirm": function(value) {
-						this[0].empty();
-						this[0].set("text", value);
-						this[1].refreshAll();
-					}.bind([td, this, oldValue]),
-					"rollback": function() {
-						this[0].empty();
-						this[0].set("text", this[2]);
-					}.bind([td, this, oldValue])
-				}
-			}).inject(td);
-			input.focus();
-			input.select();
-			new Element("span",{
-				"class": "blue radius label",
-				"text": "save",
-				"styles" : {
-					"cursor": "pointer"
-				},
-				"events" : {
-					"click" : function(ev) {
-						ev.preventDefault();
-						this.fireEvent("confirm", this.get("value"));
-					}.bind(input)
-				}
-			}).inject(td);
-			td.appendText(" ");
-			new Element("span",{
-				"class": "red radius label",
-				"text": "discard",
-				"styles" : {
-					"cursor": "pointer"
-				},
-				"events" : {
-					"click" : function(ev) {
-						ev.preventDefault();
-						this.fireEvent("rollback");
-					}.bind(input)
-				}
-			}).inject(td);
+					"events" : {
+						"click" : function(ev) {
+							ev.preventDefault();
+							this.fireEvent("confirm", this.get("value"));
+						}.bind(input)
+					}
+				}).inject(td);
+				td.appendText(" ");
+				new Element("span",{
+					"class": "red radius label",
+					"text": "discard",
+					"styles" : {
+						"cursor": "pointer"
+					},
+					"events" : {
+						"click" : function(ev) {
+							ev.preventDefault();
+							this.fireEvent("rollback");
+						}.bind(input)
+					}
+				}).inject(td);
+			}		
+		}.bind(this));
+		this.options.preview.tbody.addEvent("mousedown:relay(.description)", function(ev) {
+			ev.target.getParent("tr").addClass("while-mousedown");
+			ev.target.getParent("tr").removeClass("mouseup");
+		});
+		this.options.preview.tbody.addEvent("mouseup:relay(.description)", function(ev) {
+			ev.target.getParent("tr").removeClass("while-mousedown");
+			ev.target.getParent("tr").addClass("mouseup");
+		});
+	},
+	prepareAddSingleFrame: function() {
+		document.id("add-single-frame").addEvent("click", function(ev){
+			ev.preventDefault();
+			this.createNewFrame();
+			this.refreshAll();
 		}.bind(this));
 	},
 	insertFrames: function(wantedDescription, wantedPosition, wantedHowMany) {
@@ -196,13 +333,15 @@ var NewEntandoPageModelsBuilder = new Class({
 			this.createNewFrame(description!=null&&description.length>0?description:"frame",position,index, romanizedCounter);
 		}
 		this.refreshPreviewPositions(position+howmany);
-		this.refreshAddFramesPositions();
 		this.refreshAll();
 	},
 	createNewFrame: function(description, position, index, romanizedCounter) {
+		description = (description !== undefined && description.length > 0) ? description : "frame";
 		description = romanizedCounter ? (description + " " +this.romanize(index+1).trim()) : description;
 		index = index !== undefined ? index : 0;
+		position = position!==undefined ? position : this.options.preview.tbody.getElements("tr").length;
 		var tr = this.options.preview.tr.clone();
+		tr.setStyle("display", "none");
 		var tds = tr.getElements("td");
 		tds[0].set("text", position+index);
 		tds[1].set("text", description);
@@ -218,6 +357,29 @@ var NewEntandoPageModelsBuilder = new Class({
 				tr.inject(this.options.preview.tbody, "bottom");
 			}
 		}
+		new Fx.Reveal(tr).reveal();
+		if (this.sortable==null) {
+			this.setupSortable();
+		}
+		else {
+			this.sortable.addItems(tr);
+		}
+	},
+	setupSortable: function() {
+		this.sortable = new Sortables(this.options.preview.tbody,{
+			clone: false,
+			onStart: function(element, clone) {
+				element.addClass("while-dragging");
+				//clone.addClass("while-dragging");
+			},
+			onComplete: function(element, clone) {
+				this.refreshPreviewPositions();
+				this.refreshXML();
+				this.refreshJSP();
+				this.refreshSQL();
+				element.removeClass("while-dragging");
+			}.bind(this)
+		});
 	},
 	insertFramesFromXml: function(wantedXml) {
 		var xml;
@@ -257,7 +419,7 @@ var NewEntandoPageModelsBuilder = new Class({
 						var children = item.getChildren(); 
 						obj[tag] = [];
 						if (children.length > 0) {
-							for (var x=0;x<children.length;x++) {
+							for (var x=0; x<children.length; x++) {
 								var frame = children[x];
 								var framepos = frame.get("pos");
 								var descrEl = frame.getFirst("descr")
@@ -298,7 +460,6 @@ var NewEntandoPageModelsBuilder = new Class({
 		var start = 0;
 		if (startPosition!==undefined) {
 			start = startPosition;
-			//console.log("refreshing from: ",start);
 		}
 		var trs = this.options.preview.tbody.getElements("tr");
 		for (var i = start; i < trs.length; i++) {
@@ -327,9 +488,12 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 	},
 	refreshAll: function() {
+		this.refreshAddFramesPositions();
 		this.refreshXML();
 		this.refreshJSP();
 		this.refreshSQL();
+		if (this.sortable!==null) { this.sortable.detach(); }
+		this.setupSortable();
 	},
 	refreshXML: function() {
 		var xml = document.id("xml-code");
@@ -359,7 +523,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('modelcode', 'Sample', '<frames>\n";
+		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
