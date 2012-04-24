@@ -23,6 +23,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.prepareAddFrames();
 		this.prepareLoadXmlFrames();
 		this.preparePreview();
+		this.prepareAddSingleFrame();
 	},
 	prepareAddFrames: function() {
 		this.options.addframes.form.addEvent("submit", function(ev){ev.preventDefault()});
@@ -48,6 +49,7 @@ var NewEntandoPageModelsBuilder = new Class({
 					onComplete: function(){
 						this[1].destroy();
 						this[0].refreshPreviewPositions(pos);
+						this[0].refreshAll();
 					}.bind([this, tr])
 				});
 		}.bind(this));
@@ -180,6 +182,13 @@ var NewEntandoPageModelsBuilder = new Class({
 			}		
 		}.bind(this));
 	},
+	prepareAddSingleFrame: function() {
+		document.id("add-single-frame").addEvent("click", function(ev){
+			ev.preventDefault();
+			this.createNewFrame();
+			this.refreshAll();
+		}.bind(this));
+	},
 	insertFrames: function(wantedDescription, wantedPosition, wantedHowMany) {
 		var howmany, description, position;
 		if (wantedDescription!==undefined&&wantedPosition!==undefined&&wantedHowMany!==undefined) {
@@ -200,13 +209,15 @@ var NewEntandoPageModelsBuilder = new Class({
 			this.createNewFrame(description!=null&&description.length>0?description:"frame",position,index, romanizedCounter);
 		}
 		this.refreshPreviewPositions(position+howmany);
-		this.refreshAddFramesPositions();
 		this.refreshAll();
 	},
 	createNewFrame: function(description, position, index, romanizedCounter) {
+		description = (description !== undefined && description.length > 0) ? description : "frame";
 		description = romanizedCounter ? (description + " " +this.romanize(index+1).trim()) : description;
 		index = index !== undefined ? index : 0;
+		position = position!==undefined ? position : this.options.preview.tbody.getElements("tr").length;
 		var tr = this.options.preview.tr.clone();
+		tr.setStyle("display", "none");
 		var tds = tr.getElements("td");
 		tds[0].set("text", position+index);
 		tds[1].set("text", description);
@@ -222,6 +233,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				tr.inject(this.options.preview.tbody, "bottom");
 			}
 		}
+		new Fx.Reveal(tr).reveal();
 	},
 	insertFramesFromXml: function(wantedXml) {
 		var xml;
@@ -302,7 +314,6 @@ var NewEntandoPageModelsBuilder = new Class({
 		var start = 0;
 		if (startPosition!==undefined) {
 			start = startPosition;
-			//console.log("refreshing from: ",start);
 		}
 		var trs = this.options.preview.tbody.getElements("tr");
 		for (var i = start; i < trs.length; i++) {
@@ -331,6 +342,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 	},
 	refreshAll: function() {
+		this.refreshAddFramesPositions();
 		this.refreshXML();
 		this.refreshJSP();
 		this.refreshSQL();

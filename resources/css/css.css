@@ -9,13 +9,14 @@ th.one.icons, td.one.icons {
 .text-left {
 	text-align: left;
 }
+
 .text-center {
 	text-align: center;
 }
+
 .text-right {
 	text-align: right;
 }
-
 
 a.action-up:link,
 a.action-up:visited,
@@ -45,9 +46,7 @@ a.action-delete:hover {
 	font-family: monospace;
 	font-weight: bold;
 	font-size: 14px;
-	overflow-x: scroll;
 }
-
 
 dl.contained.tabs dd a {
 	-moz-border-radius-topleft: 4px;
@@ -57,4 +56,21 @@ dl.contained.tabs dd a {
 	-webkit-border-radius: 4px 4px 0px 0px;
 	border-radius: 4px 4px 0px 0px;
 	margin-right: 3px;
+}
+
+.preview-sample {
+	-webkit-transition: background 120ms linear;
+	-moz-transition: background 120ms linear;
+	-ms-transition: background 120ms linear;
+	-o-transition: background 120ms linear;
+	transition: background 120ms linear;
+}
+
+.preview-sample:hover {
+	background-color: rgba(127, 174, 0, 0.15);
+	-webkit-transition: background 280ms linear;
+	-moz-transition: background 280ms linear;
+	-ms-transition: background 280ms linear;
+	-o-transition: background 280ms linear;
+	transition: background 280ms linear;
 }
