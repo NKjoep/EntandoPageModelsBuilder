@@ -4,7 +4,7 @@
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en" manifest="manifest.appcache"><!--<![endif]-->
 <head>
 	<meta charset="utf-8" />
 
@@ -43,6 +43,7 @@
 	<script src="resources/js/entando-pagemodels-builder.js"></script>
 	<script src="resources/ZeroClipboard/ZeroClipboard.js" />
 	<script type="text/javascript">
+		/*
 		var clip = null;
 		window.addEvent("domready", function(){
 			ZeroClipboard.setMoviePath( 'http://nkjoep.github.com/EntandoPageModelsBuilder/resources/ZeroClipboard/ZeroClipboard10.swf' );
@@ -52,7 +53,8 @@
     			clip.setText(this.get("text"));
     			console.log("clip", clip);
     		}.bind(document.id("xml-code")));
-		})	
+		})
+		*/	
 	</script>
 </head>
 <body>
@@ -62,67 +64,76 @@
 
 		<div class="row">
 			<div class="twelve columns">
-				<h2>Entando Page Models Builder</h2>
+				<h1>Entando Page Models Builder</h1>
 				<p>The easy tool to create your Page Models in a click.</p>
 				<hr />
 			</div>
 		</div>
-
 		<div class="row">
-			
-			<div class="four columns">			
-				<h2>Input</h2>
+			<div class="twelve columns">
+				<p>
+					Title:&#32;<input type="text" id="title" name="title" class="oversize expand input-text" placeholder="Template Title" />
+				</p>
+				<p>
+					Code:&#32;<input type="text" id="code" name="code" class="large input-text" placeholder="modelcode" />
+				</p>
+				<hr />
+			</div>
+		</div>
+		<div class="row">
+			<div class="four columns">
+				<div class="row">
+					<h2>Input</h2>
+					<dl class="tabs contained">
+						<dd><a href="#addFrames" class="active">Add Frames</a></dd>
+						<dd><a href="#parseXml">Parse Xml</a></dd>
+					</dl>
+					<ul class="tabs-content contained">
+						<li class="active" id="addFramesTab">
+								<form action="#addFrames" id="addForm" class="custom">
+									<p>
+										<label for="descr">Frame Description</label>
+										<input type="text" id="descr" name="description" class="oversize input-text" value="Sample Frame" />
+									</p>
+									<p>
+										<label for="how">How Many?</label>
+										<select id="how" name="how-many" style="display:none;">
 
-				<dl class="tabs contained">
-					<dd><a href="#addFrames" class="active">Add Frames</a></dd>
-					<dd><a href="#parseXml">Parse Xml</a></dd>
-				</dl>
-
-				<ul class="tabs-content contained">
-					<li class="active" id="addFramesTab">
-							<form action="#addFrames" id="addForm" class="custom">
-										<p>
-											<label for="descr">Frame Description</label>
-											<input type="text" id="descr" name="description" class="oversize input-text" />
-										</p>
-										<p>
-											<label for="how">How Many?</label>
-											<select id="how" name="how-many" style="display:none;">
-												<option>1</option>
-												<option>2</option>
-												<option>3</option>
-												<option>4</option>
-												<option>5</option>
-												<option>6</option>
-												<option>7</option>
-												<option>8</option>
-												<option>9</option>
-												<option>10</option>
-												<option>11</option>
-												<option>12</option>
-												<option>13</option>
-												<option>14</option>
-												<option>15</option>
-												<option>16</option>
-												<option>17</option>
-												<option>18</option>
-												<option>19</option>
-												<option>20</option>
-											</select>
-										</p>
-										<p>
-											<label for="where">Where Insert this/these?</label>
-											<select id="where" name="position" style="display:none;">
-												<option value="0">at position 0</option>
-											</select>
-										</p>
-										<p class="buttons">
-											<button class="green nice button radius" name="action:add">Add</button>
-										</p>
-							</form>
-					</li>
-					<li id="parseXmlTab">
-						<form action="#loadXml">
+											<option value="1">1 frame</option>
+											<option value="2">2 frames</option>
+											<option value="3">3 frames</option>
+											<option value="4">4 frames</option>
+											<option value="5">5 frames</option>
+											<option value="6">6 frames</option>
+											<option value="7">7 frames</option>
+											<option value="8">8 frames</option>
+											<option value="9">9 frames</option>
+											<option value="10">10 frames</option>
+											<option value="11">11 frames</option>
+											<option value="12">12 frames</option>
+											<option value="13">13 frames</option>
+											<option value="14">14 frames</option>
+											<option value="15">15 frames</option>
+											<option value="16">16 frames</option>
+											<option value="17">17 frames</option>
+											<option value="18">18 frames</option>
+											<option value="19">19 frames</option>
+											<option value="20">20 frames</option>
+										</select>
+									</p>
+									<p>
+										<label for="where">Where Insert this/these?</label>
+										<select id="where" name="position" style="display:none;">
+											<option value="0">at position 0</option>
+										</select>
+									</p>
+									<p class="buttons">
+										<button class="green nice button radius" name="action:add">Add</button>
+									</p>
+								</form>
+						</li>
+						<li id="parseXmlTab">
+							<form action="#loadXml">
 								<p>
 									<label for="directInput">Xml Source</label>
 									<textarea id="directInput" rows="15" name="xml-source"></textarea>
@@ -133,9 +144,17 @@
 								<p class="buttons">
 									<button id="loadDirectInput" class="green nice button radius" name="action:load">Load</button>
 								</p>
-						</form>
-					</li>
-				</ul>
+							</form>
+						</li>
+					</ul>
+				</div>
+				<div class="row localStorage-disabled">
+					<button id="save" class="blue nice button radius">Save</button>
+				</div>
+				<hr />
+				<div class="row localStorage-disabled" id="saved-models">
+					<h3>Saved Page Models</h3>
+				</div>
 			</div>
 
 
@@ -162,16 +181,21 @@
 							<tbody class="preview-tbody">
 								<tr class="preview-sample">
 									<td class="one">0</td>
-									<td class="description" title="double click to edit">Sample Frame</td>
+									<td class="description" title="drag/drop enabled, double click to edit">Sample Frame</td>
 									<td class="one icons"><a href="#action:up" class="action-up green radius label">&uArr;</a></td>
 									<td class="one icons"><a href="#action:down" class="action-down green radius label">&dArr;</a></td>
 									<td class="one icons"><a href="#action:delete" class="action-delete red radius label" title="Delete">x</a></td>
 								</tr>
 							</tbody>
-						</table> 
-						<a href="#addframe" class="blue radius label" id="add-single-frame">
-							+ Frame
-						</a>
+						</table>
+						<p>
+							<a href="#addframe" class="blue radius label" title="Add a frame to the bottom" id="add-single-frame">
+								+ Frame
+							</a>&nbsp;
+						</p>
+						<p>
+							Note: drag and drop the rows to sort them. Double click to edit the descriptions.
+						</p>
 					</li>
 					<li id="codeTab">
 						<dl class="nice tabs green contained">
@@ -200,7 +224,7 @@
 								</div>
 								<div class="row">
 								<div class="panel">
-<pre id="jsp-code">
+<pre class="brush: xml" id="jsp-code">
 </pre>
 								</div>
 							</li>

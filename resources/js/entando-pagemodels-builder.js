@@ -20,10 +20,104 @@ var NewEntandoPageModelsBuilder = new Class({
 			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
 			tr: document.getElement(".preview-table").getElement(".preview-sample")
 		};
+		this.setupMetaData();
+		this.setupStorage();
 		this.prepareAddFrames();
 		this.prepareLoadXmlFrames();
 		this.preparePreview();
 		this.prepareAddSingleFrame();
+		this.sortable = null;
+	},
+	setupStorage: function() {
+		if (window.localStorage!==undefined) {
+			this.storedModels = window.localStorage.getItem("entando-page-models-builder-config");
+			document.getElements(".localStorage-disabled").removeClass("localStorage-disabled");
+			if (this.storedModels!==undefined && this.storedModels!==null && this.storedModels.length >0) {
+				this.storedModels = JSON.decode(this.storedModels);
+				if (!(typeOf(this.storedModels) == 'object')) {
+					this.storedModels = {};
+				}
+			}
+			else {
+				this.storedModels = {};
+			}
+			document.id("save").addEvent("click", function(ev){
+				ev.preventDefault();
+				this.storeModel();
+			}.bind(this));
+			this.restoreModels();
+			document.id("saved-models").addEvent("click:relay(a.load-model)", function(ev) {
+				//console.log("clicked");
+				//this.loadStoredModel(ev.target.getParent().retrieve("code"));
+			}.bind(this));
+		}
+		else {
+			document.getElements(".localStorage-disabled").destroy();
+		}
+	},
+	storeModel: function() {
+		this.storedModels[this.code] = {
+			title: this.title,
+			code: this.code,
+			xml: document.id("xml-code").get("text")
+		};
+		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
+	},
+	restoreModels: function() {
+		Object.each(this.storedModels, function(item){
+			/*<div class="alert-box success">
+				<a href="#load-model-code">Title / Code</a>
+				<a href="" class="close">&times;</a>
+			</div>*/
+			var div = new Element("div", {
+				"class": "alert-box success"
+			}).inject(document.id("saved-models")).store("code", item.code);
+			new Element("a", {
+				"class": "load-model",
+				href: "#load-model-"+item.code,
+				text: item.title + " / "+item.code
+			}).inject(div);
+			new Element("a", {
+				href: "",
+				"class": "close",
+				"html": "&times;"
+			}).inject(div);
+		});
+	},
+	loadStoredModel: function(code) {
+		var modelObj = this.storedModels[code];
+		if (modelObj!==undefined) {
+			this.insertFramesFromXml(modelObj.xml);
+			document.id("title").set("value", modelObj.title);
+			document.id("code").set("value", modelObj.code);
+			this.refreshAll();
+		}
+	},
+	setupMetaData: function() {
+		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : "Sample Model";
+		this.code = document.id("code").get("value") != null && document.id("code").get("value") != "" ? document.id("code").get("value") : "samplemodel";
+		document.id("title").addEvent("change", function(ev){
+			this.title = ev.target.get("value");
+			this.refreshSQL();
+		}.bind(this));
+		document.id("title").addEvent("keydown", function(ev){
+			if(ev.key == 'enter'){
+				ev.preventDefault();
+				this.title = ev.target.get("value");
+				this.refreshSQL();
+			}
+		}.bind(this));
+		document.id("code").addEvent("change", function(ev){
+			this.code = ev.target.get("value");
+			this.refreshSQL();
+		}.bind(this));
+		document.id("code").addEvent("keydown", function(ev){
+			if(ev.key == 'enter'){
+				ev.preventDefault();
+				this.code = ev.target.get("value");
+				this.refreshSQL();
+			}
+		}.bind(this));
 	},
 	prepareAddFrames: function() {
 		this.options.addframes.form.addEvent("submit", function(ev){ev.preventDefault()});
@@ -47,10 +141,11 @@ var NewEntandoPageModelsBuilder = new Class({
 				var pos = this.options.preview.tbody.getElements("tr").indexOf(tr);
 				tr.dissolve({
 					onComplete: function(){
+						this[0].sortable.removeItems(this[1]);
 						this[1].destroy();
-						this[0].refreshPreviewPositions(pos);
+						this[0].refreshPreviewPositions(this[2]);
 						this[0].refreshAll();
-					}.bind([this, tr])
+					}.bind([this, tr, pos])
 				});
 		}.bind(this));
 		this.options.preview.tbody.addEvent("click:relay(a.action-up)", function(ev) {
@@ -151,7 +246,6 @@ var NewEntandoPageModelsBuilder = new Class({
 					}
 				}).inject(td);
 				input.focus();
-				input.select();
 				new Element("span",{
 					"class": "blue radius label",
 					"text": "save",
@@ -181,6 +275,14 @@ var NewEntandoPageModelsBuilder = new Class({
 				}).inject(td);
 			}		
 		}.bind(this));
+		this.options.preview.tbody.addEvent("mousedown:relay(.description)", function(ev) {
+			ev.target.getParent("tr").addClass("while-mousedown");
+			ev.target.getParent("tr").removeClass("mouseup");
+		});
+		this.options.preview.tbody.addEvent("mouseup:relay(.description)", function(ev) {
+			ev.target.getParent("tr").removeClass("while-mousedown");
+			ev.target.getParent("tr").addClass("mouseup");
+		});
 	},
 	prepareAddSingleFrame: function() {
 		document.id("add-single-frame").addEvent("click", function(ev){
@@ -234,6 +336,28 @@ var NewEntandoPageModelsBuilder = new Class({
 			}
 		}
 		new Fx.Reveal(tr).reveal();
+		if (this.sortable==null) {
+			this.setupSortable();
+		}
+		else {
+			this.sortable.addItems(tr);
+		}
+	},
+	setupSortable: function() {
+		this.sortable = new Sortables(this.options.preview.tbody,{
+			clone: false,
+			onStart: function(element, clone) {
+				element.addClass("while-dragging");
+				//clone.addClass("while-dragging");
+			},
+			onComplete: function(element, clone) {
+				this.refreshPreviewPositions();
+				this.refreshXML();
+				this.refreshJSP();
+				this.refreshSQL();
+				element.removeClass("while-dragging");
+			}.bind(this)
+		});
 	},
 	insertFramesFromXml: function(wantedXml) {
 		var xml;
@@ -273,7 +397,7 @@ var NewEntandoPageModelsBuilder = new Class({
 						var children = item.getChildren(); 
 						obj[tag] = [];
 						if (children.length > 0) {
-							for (var x=0;x<children.length;x++) {
+							for (var x=0; x<children.length; x++) {
 								var frame = children[x];
 								var framepos = frame.get("pos");
 								var descrEl = frame.getFirst("descr")
@@ -346,6 +470,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshXML();
 		this.refreshJSP();
 		this.refreshSQL();
+		this.sortable.detach();
+		this.setupSortable();
 	},
 	refreshXML: function() {
 		var xml = document.id("xml-code");
@@ -375,7 +501,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('modelcode', 'Sample', '<frames>\n";
+		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('modelcode', '"+this.title+"', '<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
