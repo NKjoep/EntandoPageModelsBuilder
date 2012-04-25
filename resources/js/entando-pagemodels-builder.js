@@ -545,13 +545,13 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
+		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+"', '<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
 			var description = tds[1].get("text");
 			string = string + '\t<frame pos="'+pos+'">\n';
-			string = string + '\t\t<descr>'+description.replace(/'/g,"\\'")+'</descr>\n';
+			string = string + '\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>\n';
 			string = string + "\t</frame>\n";
 		});
 		string = string + "</frames>', NULL);";
