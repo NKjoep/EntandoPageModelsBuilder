@@ -27,6 +27,18 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.preparePreview();
 		this.prepareAddSingleFrame();
 		this.sortable = null;
+		this.prepareCodeArea();
+	},
+	prepareCodeArea: function() {
+		document.id("xml-code").addEvent("click", function(ev){
+			ev.target.select();
+		});
+		document.id("jsp-code").addEvent("click", function(ev){
+			ev.target.select();
+		});
+		document.id("sql-code").addEvent("click", function(ev){
+			ev.target.select();
+		});
 	},
 	setupStorage: function() {
 		if (window.localStorage!==undefined) {
@@ -507,14 +519,14 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshXML: function() {
 		var xml = document.id("xml-code");
-		var string = "<frames>\n\r";
+		var string = "<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
 			var description = tds[1].get("text");
-			string = string + '\t<frame pos="'+pos+'">\n\r';
-			string = string + '\t\t<descr>'+description+'</descr>\n\r';
-			string = string + "\t</frame>\n\r";
+			string = string + '\t<frame pos="'+pos+'">\n';
+			string = string + '\t\t<descr>'+description+'</descr>\n';
+			string = string + "\t</frame>\n";
 		});
 		string = string + "</frames>";
 		xml.set("text", string);
@@ -526,21 +538,21 @@ var NewEntandoPageModelsBuilder = new Class({
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
 			var description = tds[1].get("text");
-			string = string + '<%-- '+description+' --%>\n\r';
-			string = string + '\t<wp:show frame="'+pos+'" />\n\r';
+			string = string + '<%-- '+description+' --%>\n';
+			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		});
 		jsp.set("text", string);	
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\rINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
+		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
 			var description = tds[1].get("text");
-			string = string + '\t<frame pos="'+pos+'">\n\r';
-			string = string + '\t\t<descr>'+description.replace(/'/g,"\\'")+'</descr>\n\r';
-			string = string + "\t</frame>\n\r";
+			string = string + '\t<frame pos="'+pos+'">\n';
+			string = string + '\t\t<descr>'+description.replace(/'/g,"\\'")+'</descr>\n';
+			string = string + "\t</frame>\n";
 		});
 		string = string + "</frames>', NULL);";
 		sql.set("text", string);	
