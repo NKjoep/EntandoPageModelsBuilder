@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en" manifest=""><!--<![endif]-->
+<head>
+	<meta charset="utf-8" />
+
+	<!-- Set the viewport width to device width for mobile -->
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Welcome to Entando Page Models Builder</title>
+	<link href='http://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
+	<!-- Included CSS Files -->
+	<!-- Combine and Compress These CSS Files -->
+	<link rel="stylesheet" href="foundation/stylesheets/globals.css">
+	<link rel="stylesheet" href="foundation/stylesheets/typography.css">
+	<link rel="stylesheet" href="foundation/stylesheets/grid.css">
+	<link rel="stylesheet" href="foundation/stylesheets/ui.css">
+	<link rel="stylesheet" href="foundation/stylesheets/forms.css">
+	<link rel="stylesheet" href="foundation/stylesheets/orbit.css">
+	<link rel="stylesheet" href="foundation/stylesheets/reveal.css">
+	<link rel="stylesheet" href="foundation/stylesheets/mobile.css">
+	<!-- End Combine and Compress These CSS Files -->
+	<link rel="stylesheet" href="foundation/stylesheets/app.css">
+
+	<!--[if lt IE 9]>
+		<link rel="stylesheet" href="foundation/stylesheets/ie.css">
+	<![endif]-->
+	
+	<script src="foundation/javascripts/modernizr.foundation.js"></script>
+
+	<!-- IE Fix for HTML5 Tags -->
+	<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="stylesheet" href="resources/css/css.css" />
+	<script src="resources/js/lib/mootools-core.js"></script>
+	<script src="resources/js/lib/mootools-more.js"></script>
+	<script src="resources/js/entando-pagemodels-builder.js"></script>
+</head>
+<body>
+	<a href="https://github.com/NKjoep/EntandoPageModelsBuilder/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/camo.github.com/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+	<!-- container -->
+	<div class="container">
+
+		<div class="row">
+			<div class="twelve columns">
+				<h1>Entando Page Models Builder</h1>
+				<p>The easy tool to create your Page Models in a click.</p>
+				<hr />
+			</div>
+		</div>
+		<div class="row">
+			<div class="twelve columns">
+				<p>
+					Title:&#32;<input type="text" id="title" name="title" class="oversize expand input-text" placeholder="Template Title" />
+				</p>
+				<p>
+					Code (only alphanumeric characters):&#32;<input type="text" id="code" name="code" class="large input-text" placeholder="modelcode" />
+				</p>
+				<hr />
+			</div>
+		</div>
+		<div class="row">
+			<div class="four columns">
+				<div class="row">
+					<dl class="tabs contained">
+						<dd><a href="#addFrames" class="active">Add Frames</a></dd>
+						<dd><a href="#parseXml">Parse Xml</a></dd>
+					</dl>
+					<ul class="tabs-content contained">
+						<li class="active" id="addFramesTab">
+								<form action="#addFrames" id="addForm" class="custom">
+									<p>
+										<label for="descr">Frame Description</label>
+										<input type="text" id="descr" name="description" class="oversize input-text" value="Sample Frame" />
+									</p>
+									<p>
+										<label for="how">How Many?</label>
+										<select id="how" name="how-many" style="display:none;">
+
+											<option value="1">1 frame</option>
+											<option value="2">2 frames</option>
+											<option value="3">3 frames</option>
+											<option value="4">4 frames</option>
+											<option value="5">5 frames</option>
+											<option value="6">6 frames</option>
+											<option value="7">7 frames</option>
+											<option value="8">8 frames</option>
+											<option value="9">9 frames</option>
+											<option value="10">10 frames</option>
+											<option value="11">11 frames</option>
+											<option value="12">12 frames</option>
+											<option value="13">13 frames</option>
+											<option value="14">14 frames</option>
+											<option value="15">15 frames</option>
+											<option value="16">16 frames</option>
+											<option value="17">17 frames</option>
+											<option value="18">18 frames</option>
+											<option value="19">19 frames</option>
+											<option value="20">20 frames</option>
+										</select>
+									</p>
+									<p>
+										<label for="where">Where Insert this/these?</label>
+										<select id="where" name="position" style="display:none;">
+											<option value="0">at position 0</option>
+										</select>
+									</p>
+									<p class="buttons">
+										<button class="green nice button radius" name="action:add">Add</button>
+									</p>
+								</form>
+						</li>
+						<li id="parseXmlTab">
+							<form action="#loadXml">
+								<p>
+									<label for="directInput">Xml Source</label>
+									<textarea id="directInput" rows="15" name="xml-source"></textarea>
+								</p>
+								<p>
+									Note: the current data will be overridden.
+								</p>
+								<p class="buttons">
+									<button id="loadDirectInput" class="green nice button radius" name="action:load">Load</button>
+								</p>
+							</form>
+						</li>
+					</ul>
+				</div>
+				<div class="row localStorage-disabled">
+					<button id="save" class="blue nice button radius">Save</button>
+				</div>
+				<hr />
+				<div class="row localStorage-disabled" id="saved-models">
+					<h3>Saved Page Models</h3>
+				</div>
+			</div>
+			<div class="eight columns">
+				<dl class="tabs contained">
+					<dd><a href="#preview" class="active">Structure Preview</a></dd>
+					<dd><a href="#codeXML" class="active">XML Code</a></dd>
+					<dd><a href="#codeJSP">JSP Code</a></dd>
+					<dd><a href="#codeSQL">SQL Code</a></dd>
+				</dl>
+				<ul class="tabs-content contained">
+					<li class="active" id="previewTab">
+						<table width="100%" class="preview-table">
+							<thead>
+								<tr>
+									<th class="one has-tip tip-top" title="Position">P</th>
+									<th>Description</th>
+									<th class="one icons has-tip tip-top" title="Move Up">U</th>
+									<th class="one icons has-tip tip-top" title="Move Down">D</th>
+									<th class="one icons has-tip tip-top" title="Delete">X</th>
+								</tr>
+							</thead>
+							<tbody class="preview-tbody">
+								<tr class="preview-sample">
+									<td class="one">0</td>
+									<td class="description" title="drag/drop enabled, double click to edit">Sample Frame</td>
+									<td class="one icons"><a href="#action:up" class="action-up green radius label">&uArr;</a></td>
+									<td class="one icons"><a href="#action:down" class="action-down green radius label">&dArr;</a></td>
+									<td class="one icons"><a href="#action:delete" class="action-delete red radius label" title="Delete">x</a></td>
+								</tr>
+							</tbody>
+						</table>
+						<p>
+							<a href="#addframe" class="blue radius label" title="Add a frame to the bottom" id="add-single-frame">
+								+ Frame
+							</a>&nbsp;
+						</p>
+						<p>
+							Note: drag and drop the rows to sort them. Double click to edit the descriptions.
+						</p>
+					</li>
+					<li id="codeXMLTab">
+						<div class="panel">
+<textarea class="has-tip tip-top" id="xml-code" readonly="readonly" title="click to select all">
+</textarea>
+						</div>
+					</li>
+					<li id="codeJSPTab">
+						<div class="panel">
+<textarea class="has-tip tip-top" id="jsp-code" readonly="readonly" title="click to select all">
+</textarea>
+						</div>
+					</li>
+					<li id="codeSQLTab">
+						<div class="panel">
+<textarea class="has-tip tip-top" id="sql-code" readonly="readonly" title="click to select all">
+</textarea>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- container -->
+	<!-- Included JS Files -->
+	<script src="foundation/javascripts/jquery.min.js"></script>
+	<!-- Combine and Compress These JS Files -->
+	<script src="foundation/javascripts/jquery.reveal.js"></script>
+	<script src="foundation/javascripts/jquery.orbit-1.4.0.js"></script>
+	<script src="foundation/javascripts/jquery.customforms.js"></script>
+	<script src="foundation/javascripts/jquery.placeholder.min.js"></script>
+	<script src="foundation/javascripts/jquery.tooltips.js"></script>
+	<!-- End Combine and Compress These JS Files -->
+	<script src="foundation/javascripts/app.js"></script>
+</body>
+</html>
