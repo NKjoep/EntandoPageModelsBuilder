@@ -1,3 +1,7 @@
+h1, h2, h3, h4, h5, h6, th {
+	font-family: 'Comfortaa', sans-serif;
+}
+
 .nice.tabs.green dd a.active { 
 	border-top: 3px solid #7FAE00; 
 }
