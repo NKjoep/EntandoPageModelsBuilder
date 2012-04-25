@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2012-04-24
+# 2012-04-24#v1
 
 index.html
 foundation/images/misc/button-gloss.png
@@ -37,15 +37,8 @@ foundation/stylesheets/typography.css
 foundation/stylesheets/ui.css
 resources/css/css.css
 resources/js/entando-pagemodels-builder.js
-resources/js/lib/md5-min.js
 resources/js/lib/mootools-core.js
 resources/js/lib/mootools-more.js
-resources/js/lib/moo-xml-helper.js
-resources/js/lib/ZeroClipboard.js
-resources/ZeroClipboard/vline.png
-resources/ZeroClipboard/ZeroClipboard10.swf
-resources/ZeroClipboard/ZeroClipboard.js
-resources/ZeroClipboard/ZeroClipboard.swf
 
 NETWORK:
 *

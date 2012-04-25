@@ -124,8 +124,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
 	},
 	setupMetaData: function() {
-		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : "Sample Model";
-		this.code = document.id("code").get("value") != null && document.id("code").get("value") != "" ? document.id("code").get("value") : "samplemodel";
+		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : document.id("title").getProperty("placeholder");
+		this.code = document.id("code").get("value") != null && document.id("code").get("value") != "" ? document.id("code").get("value") : document.id("code").getProperty("placeholder");
 		document.id("title").addEvent("change", function(ev){
 			this.title = ev.target.get("value");
 			this.refreshSQL();
@@ -533,7 +533,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "INSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
+		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\rINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title+"', '<frames>\n";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
