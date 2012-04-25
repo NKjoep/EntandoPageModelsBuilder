@@ -75,7 +75,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.storedModels[this.code] = {
 			title: this.title,
 			code: this.code,
-			xml: document.id("xml-code").get("text")
+			xml: document.id("xml-code").get("value")
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
 		this.createSavedModelButtonLoader(this.storedModels[this.code]);
