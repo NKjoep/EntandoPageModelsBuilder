@@ -529,7 +529,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + "\t</frame>\n";
 		});
 		string = string + "</frames>";
-		xml.set("text", string);
+		xml.set("value", string);
 	},
 	refreshJSP: function() {
 		var jsp = document.id("jsp-code");
@@ -541,7 +541,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + '<%-- '+description+' --%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		});
-		jsp.set("text", string);	
+		jsp.set("value", string);	
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
@@ -555,7 +555,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + "\t</frame>\n";
 		});
 		string = string + "</frames>', NULL);";
-		sql.set("text", string);	
+		sql.set("value", string);	
 	}
 });
 window.addEvent("domready", function(){
