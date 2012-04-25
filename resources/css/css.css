@@ -55,6 +55,7 @@ a.action-delete:hover {
 	background-color: transparent;
 	border: 0px solid #fff;
 	margin-bottom: 0;
+	cursor: pointer;
 }
 
 dl.contained.tabs dd a {
