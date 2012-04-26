@@ -62,9 +62,17 @@ var NewEntandoPageModelsBuilder = new Class({
 				ev.preventDefault();
 				this.loadStoredModel(ev.target.getParent().retrieve("code"));
 			}.bind(this));
-			document.id("saved-models").addEvent("click:relay(.delete-model)", function(ev) {
+			document.id("saved-models").addEvent("click:relay(.close)", function(ev) {
 				ev.preventDefault();
-				this.unStoreModel(ev.target.getParent().retrieve("code"));
+				var parent = ev.target.getParent();
+				this.unStoreModel(parent.retrieve("code"));
+				new Fx.Morph(parent, {
+					duration: 'short',
+					transition: Fx.Transitions.Sine.easeOut,
+					onComplete: function(ell) {
+						ell.destroy();
+					}
+				}).start({opacity: [1,0]});
 			}.bind(this));
 		}
 		else {
@@ -101,7 +109,12 @@ var NewEntandoPageModelsBuilder = new Class({
 					previous.destroy();
 				}
 				else {
+					div.setStyle("opacity", "0");
 					div.inject(container);
+					new Fx.Morph(div, {
+						duration: 'short',
+						transition: Fx.Transitions.Sine.easeOut
+					}).start({opacity: [0,1]});
 				}
 				div.store("code", item.code);
 				new Element("span", {
@@ -115,7 +128,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				}).inject(div);
 				new Element("a", {
 					href: "",
-					"class": "close delete-model",
+					"class": "close",
 					"html": "&times;",
 					"title": "Delete "+ item.title + " / "+item.code
 				}).inject(div);
