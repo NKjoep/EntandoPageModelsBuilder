@@ -413,13 +413,13 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshAll();
 	},
 	createNewFrame: function(description, position, index, romanizedCounter) {
-		description = (description !== undefined && description.length > 0) ? description : "frame";
+		var tr = this.options.preview.tr.clone();
+		var tds = tr.getElements("td");
+		description = (description !== undefined && description.length > 0) ? description : tds[1].get("text");
 		description = romanizedCounter ? (description + " " +this.romanize(index+1).trim()) : description;
 		index = index !== undefined ? index : 0;
 		position = position!==undefined ? position : this.options.preview.tbody.getElements("tr").length;
-		var tr = this.options.preview.tr.clone();
 		tr.setStyle("display", "none");
-		var tds = tr.getElements("td");
 		tds[0].set("text", position+index);
 		tds[1].set("text", description);
 		if (position+index == 0) {
