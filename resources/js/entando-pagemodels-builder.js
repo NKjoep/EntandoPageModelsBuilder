@@ -164,6 +164,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	setupMetaData: function() {
 		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : document.id("title").getProperty("placeholder");
 		this.code = document.id("code").get("value") != null && document.id("code").get("value") != "" ? document.id("code").get("value") : document.id("code").getProperty("placeholder");
+		this.plugincode = document.id("plugincode").get("value") != null && document.id("plugincode").get("value") != "" ? document.id("plugincode").get("value") : "NULL";
 		document.id("title").addEvent("change", function(ev){
 			this.title = ev.target.get("value");
 			this.refreshSQL();
@@ -185,6 +186,31 @@ var NewEntandoPageModelsBuilder = new Class({
 				ev.preventDefault();
 				this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
 				ev.target.set("value",this.code);
+				this.refreshSQL();
+			}
+		}.bind(this));
+		document.id("plugincode").addEvent("change", function(ev){
+			this.plugincode = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
+			if (this.plugincode.length<=0) {
+				this.plugincode = "NULL";
+				ev.target.set("value","");
+			}
+			else {
+				ev.target.set("value",this.plugincode);
+			}
+			this.refreshSQL();
+		}.bind(this));
+		document.id("plugincode").addEvent("keydown", function(ev){
+			if(ev.key == 'enter'){
+				ev.preventDefault();
+				this.plugincode = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
+				if (this.plugincode.length<=0) {
+					this.plugincode = "NULL";
+					ev.target.set("value","");
+				}
+				else {
+					ev.target.set("value",this.plugincode);
+				}
 				this.refreshSQL();
 			}
 		}.bind(this));
@@ -580,7 +606,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + '\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>\n';
 			string = string + "\t</frame>\n";
 		});
-		string = string + "</frames>', NULL);";
+		string = string + "</frames>', "+this.plugincode+");";
 		sql.set("value", string);	
 	}
 });
