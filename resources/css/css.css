@@ -151,3 +151,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bcd296', end
 .compat-rows .row p {
 	margin-bottom: 5px;
 }
+
+input[type="text"],
+textarea {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
