@@ -615,4 +615,18 @@ var NewEntandoPageModelsBuilder = new Class({
 });
 window.addEvent("domready", function(){
 	new NewEntandoPageModelsBuilder();
+	/* temporary fix for tips nested in tabs */
+	Array.each([
+		document.getElement('a[href="#preview"]'), 
+		document.getElement('a[href="#codeXML"]'), 
+		document.getElement('a[href="#codeJSP"]'), 
+		document.getElement('a[href="#codeSQL"]')
+		], function(item) {
+		item.addEvent("click", function(){
+			var a = function(){
+				$(window).trigger('resize');
+			};
+			a.delay(23);
+		});
+	});
 })
