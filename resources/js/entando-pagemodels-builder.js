@@ -53,9 +53,20 @@ var NewEntandoPageModelsBuilder = new Class({
 			else {
 				this.storedModels = {};
 			}
+			if (this.savedmessageFx===undefined) {
+				this.savedmessageFx = new Fx.Morph(document.id("template-message-saved"), {
+					link: "cancel",
+					duration: 'normal',
+					transition: Fx.Transitions.Sine.easeOut,
+					onComplete: function(ell) {
+						this.savedmessageFx.start({opacity: 0, display: ["", ""]});
+					}.bind(this)
+				});
+			}
 			document.id("save").addEvent("click", function(ev){
 				ev.preventDefault();
 				this.storeModel();
+				this.savedmessageFx.start({opacity: [1,0], display: ["", ""]});
 			}.bind(this));
 			this.restoreModelsList();
 			document.id("saved-models").addEvent("click:relay(.load-model)", function(ev) {
@@ -117,11 +128,13 @@ var NewEntandoPageModelsBuilder = new Class({
 					}).start({opacity: [0,1]});
 				}
 				div.store("code", item.code);
+				var date = new Date();
+				date = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
 				new Element("span", {
 					"class": "load-model",
 					href: "",
-					text: item.title + " / "+item.code,
-					title: "Load "+ item.title + " / "+item.code,
+					text: item.title + " ("+item.code+")",
+					title: "Saved "+ date + ". Click to load",
 					styles: {
 						cursor: "pointer"
 					}
@@ -130,7 +143,7 @@ var NewEntandoPageModelsBuilder = new Class({
 					href: "",
 					"class": "close",
 					"html": "&times;",
-					"title": "Delete "+ item.title + " / "+item.code
+					"title": "Delete "+ item.title+" ("+item.code+")"
 				}).inject(div);
 	},
 	loadStoredModel: function(code) {
