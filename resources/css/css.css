@@ -144,3 +144,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bcd296', end
 .preview-sample .description input:focus {
 	outline: 1px solid #7FAE00;
 }
+
+.compat-rows .row {
+	margin-bottom: 0;
+}
+.compat-rows .row p {
+	margin-bottom: 5px;
+}
