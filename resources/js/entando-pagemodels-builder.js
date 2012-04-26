@@ -609,7 +609,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + '\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>\n';
 			string = string + "\t</frame>\n";
 		});
-		string = string + "</frames>', "+this.plugincode+");";
+		string = string + "</frames>', "+ (this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'") +");";
 		sql.set("value", string);	
 	}
 });
