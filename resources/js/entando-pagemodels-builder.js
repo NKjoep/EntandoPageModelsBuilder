@@ -94,6 +94,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.storedModels[this.code] = {
 			title: this.title,
 			code: this.code,
+			plugincode: this.plugincode,
 			xml: document.id("xml-code").get("value")
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
@@ -152,8 +153,10 @@ var NewEntandoPageModelsBuilder = new Class({
 			this.insertFramesFromXml(modelObj.xml);
 			document.id("title").set("value", modelObj.title);
 			document.id("code").set("value", modelObj.code);
+			document.id("plugincode").set("value", modelObj.plugincode);
 			this.title=modelObj.title;
 			this.code=modelObj.code;
+			this.plugincode=modelObj.plugincode;
 			this.refreshAll();
 		}
 	},
