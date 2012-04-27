@@ -512,7 +512,7 @@ var NewEntandoPageModelsBuilder = new Class({
 					obj = {};
 					for (var i = 0;i<root.length;i++){
 						var item = root[i];
-						var tag = item.get("tag");
+						var tag = item.get!==undefined ? item.get("tag") : item.nodeName!==undefined ? item.nodeName : item.tagName;
 						var children = item.getChildren(); 
 						obj[tag] = [];
 						if (children.length > 0) {
