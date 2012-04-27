@@ -72,6 +72,16 @@ var NewEntandoPageModelsBuilder = new Class({
 			document.id("saved-models").addEvent("click:relay(.load-model)", function(ev) {
 				ev.preventDefault();
 				this.loadStoredModel(ev.target.getParent().retrieve("code"));
+				new Fx.Morph(ev.target, {
+					duration: 'short',
+					transition: Fx.Transitions.Sine.easeOut,
+					onComplete: function(ell) {
+						new Fx.Morph(ell, {
+							duration: 'short',
+							transition: Fx.Transitions.Sine.easeOut
+						}).start({opacity: [0,1]});
+					}
+				}).start({opacity: [1,0]});
 			}.bind(this));
 			document.id("saved-models").addEvent("click:relay(.close)", function(ev) {
 				ev.preventDefault();
@@ -334,13 +344,18 @@ var NewEntandoPageModelsBuilder = new Class({
 						"confirm": function(value) {
 							this[0].empty();
 							this[0].set("text", value);
-							this[1].refreshAll();
+							this[1].refreshXML();
+							this[1].refreshJSP();
+							this[1].refreshSQL();
 							this[0].store("edit-status", null);
 						}.bind([td, this, oldValue]),
 						"rollback": function() {
 							this[0].empty();
 							this[0].set("text", this[2]);
 							this[0].store("edit-status", null);
+							this[1].refreshXML();
+							this[1].refreshJSP();
+							this[1].refreshSQL();
 						}.bind([td, this, oldValue])
 					}
 				}).inject(td);
@@ -441,6 +456,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		else {
 			this.sortable.addItems(tr);
 		}
+		return tr;
 	},
 	setupSortable: function() {
 		this.sortable = new Sortables(this.options.preview.tbody,{
@@ -578,7 +594,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
-			var description = tds[1].get("text");
+			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
+			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 			string = string + '\t<frame pos="'+pos+'">\n';
 			string = string + '\t\t<descr>'+description+'</descr>\n';
 			string = string + "\t</frame>\n";
@@ -588,11 +605,11 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshJSP: function() {
 		var jsp = document.id("jsp-code");
-		var string = "";
+		var string = '<%@ taglib prefix="wp" uri="/aps-core" %>\n\n';
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
-			var description = tds[1].get("text");
+			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
 			string = string + '<%-- '+description+' --%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		});
@@ -604,7 +621,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
-			var description = tds[1].get("text");
+			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
+			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 			string = string + '\t<frame pos="'+pos+'">\n';
 			string = string + '\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>\n';
 			string = string + "\t</frame>\n";
