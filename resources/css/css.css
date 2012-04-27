@@ -167,3 +167,7 @@ textarea {
 #directInput {
 	height: 144px;
 }
+
+a.label.blue:focus {
+	color: #fff;
+}
