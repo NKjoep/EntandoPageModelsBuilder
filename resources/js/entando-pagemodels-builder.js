@@ -101,11 +101,13 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 	},
 	storeModel: function() {
+		var date = new Date();
 		this.storedModels[this.code] = {
 			title: this.title,
 			code: this.code,
 			plugincode: this.plugincode,
-			xml: document.id("xml-code").get("value")
+			xml: document.id("xml-code").get("value"),
+			date: date.getDate() + "/" + (date.getMonth() > 9 ? date.getMonth() : "0" + date.getMonth())  + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
 		this.createSavedModelButtonLoader(this.storedModels[this.code]);
@@ -139,13 +141,11 @@ var NewEntandoPageModelsBuilder = new Class({
 					}).start({opacity: [0,1]});
 				}
 				div.store("code", item.code);
-				var date = new Date();
-				date = date.getDate() + "/" + (date.getMonth() > 9 ? date.getMonth() : "0" + date.getMonth())  + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
 				new Element("span", {
 					"class": "load-model",
 					href: "",
-					text: item.title + " ("+item.code+", "+date+")",
-					title: "Saved "+ date + ". Click to load",
+					text: item.title + " ("+item.code+", "+item.date+")",
+					title: "Saved "+ item.date + ". Click to load",
 					styles: {
 						cursor: "pointer"
 					}
@@ -244,6 +244,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	preparePreview: function() {
 		this.options.preview.tr.dispose();
+		this.options.preview.tr.removeClass("preview-sample");
 		this.options.preview.tbody.addEvent("click:relay(a.action-delete)", function(ev) {
 				ev.preventDefault();
 				var tr = ev.target.getParent("tr");
