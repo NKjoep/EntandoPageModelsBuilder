@@ -264,27 +264,27 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (trUp!=null) {
 					var trUpPos = trUp.getElements("td")[0].get("text");
 					var trPos = tr.getElements("td")[0].get("text");
-					new Fx.Reveal(tr, {
+					new Fx.Morph(tr, {
 						trUpPos: trUpPos,
 						trUp: trUp,
 						refresh: this.refreshAll.bind(this),
-						onHide: function(tr){
+						onComplete: function(tr) {
 							var trUpPos = this.options.trUpPos;
 							var trUp = this.options.trUp;
 							tr.getElements("td")[0].set("text", trUpPos);
 							tr.inject(trUp, "before");
 							this.options.refresh();
-							this.reveal();
+							new Fx.Morph(tr).start({opacity: [0,1]});
 						}
-					}).dissolve();
-					new Fx.Reveal(trUp, {
+					}).start({opacity: [1,0]});
+					new Fx.Morph(trUp, {
 						trPos: trPos,
-						onHide: function(trUp){
+						onComplete: function(trUp) {
 							var trPos = this.options.trPos;
 							trUp.getElements("td")[0].set("text", trPos);
-							this.reveal();
+							new Fx.Morph(trUp).start({opacity: [0,1]});
 						}
-					}).dissolve();
+					}).start({opacity: [1,0]});
 				}
 		}.bind(this));
 		this.options.preview.tbody.addEvent("click:relay(a.action-down)", function(ev) {
@@ -294,28 +294,28 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (trDown!=null) {
 					var trDownPos = trDown.getElements("td")[0].get("text");
 					var trPos = tr.getElements("td")[0].get("text");
-					new Fx.Reveal(tr, {
+					new Fx.Morph(tr, {
 						trDownPos: trDownPos,
 						trDown: trDown,
 						refresh: this.refreshAll.bind(this),
-						onHide: function(tr){
+						onComplete: function(tr){
 							var trDownPos = this.options.trDownPos;
 							tr.getElements("td")[0].set("text", trDownPos);
-							this.reveal();
+							new Fx.Morph(tr).start({opacity: [0,1]});
 						}
-					}).dissolve();
-					new Fx.Reveal(trDown, {
+					}).start({opacity: [1,0]});
+					new Fx.Morph(trDown, {
 						trPos: trPos,
 						tr: tr,
 						refresh: this.refreshAll.bind(this),
-						onHide: function(trDown){
+						onComplete: function(trDown){
 							var trPos = this.options.trPos;
 							trDown.getElements("td")[0].set("text", trPos);
 							trDown.inject(tr, "before");
 							this.options.refresh();
-							this.reveal();
+							new Fx.Morph(trDown).start({opacity: [0,1]});
 						}
-					}).dissolve();
+					}).start({opacity: [1,0]});
 				}
 		}.bind(this));
 		this.options.preview.tbody.addEvent("dblclick:relay(.description)", function(ev) {
