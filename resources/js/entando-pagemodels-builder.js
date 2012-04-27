@@ -140,11 +140,11 @@ var NewEntandoPageModelsBuilder = new Class({
 				}
 				div.store("code", item.code);
 				var date = new Date();
-				date = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
+				date = date.getDate() + "/" + (date.getMonth() > 9 ? date.getMonth() : "0" + date.getMonth())  + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes();
 				new Element("span", {
 					"class": "load-model",
 					href: "",
-					text: item.title + " ("+item.code+")",
+					text: item.title + " ("+item.code+", "+date+")",
 					title: "Saved "+ date + ". Click to load",
 					styles: {
 						cursor: "pointer"
@@ -644,7 +644,7 @@ window.addEvent("domready", function(){
 			var a = function(){
 				$(window).trigger('resize');
 			};
-			a.delay(23);
+			a.delay(35);
 		});
 	});
 })
