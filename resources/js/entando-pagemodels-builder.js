@@ -245,7 +245,6 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	preparePreview: function() {
 		this.options.preview.tr.dispose();
-		this.options.preview.tr.removeClass("preview-sample");
 		this.options.preview.tbody.addEvent("click:relay(a.action-delete)", function(ev) {
 				ev.preventDefault();
 				var tr = ev.target.getParent("tr");
