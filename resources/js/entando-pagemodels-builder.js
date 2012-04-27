@@ -464,6 +464,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	setupSortable: function() {
 		this.sortable = new Sortables(this.options.preview.tbody,{
 			clone: false,
+			handle: "td:first-child",
 			onStart: function(element, clone) {
 				element.addClass("while-dragging");
 				//clone.addClass("while-dragging");

@@ -76,6 +76,11 @@ dl.contained.tabs dd a {
 	transition: background 120ms linear;
 }
 
+.preview-sample td:first-child {
+	background-color: rgba(0,0,0,0.06);
+	cursor: move;
+}
+
 .preview-sample:hover {
 	background-color: rgba(127, 174, 0, 0.3);
 	-webkit-transition: background 280ms linear;
