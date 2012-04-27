@@ -18,7 +18,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.options.preview = {
 			table: document.getElement(".preview-table"), 
 			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
-			tr: document.getElement(".preview-table").getElement(".preview-sample")
+			tr: document.getElement(".preview-table").getElement(".preview-sample"),	
+			message: document.getElement(".preview-table").getNext("p")
 		};
 		this.setupMetaData();
 		this.setupStorage();
@@ -429,6 +430,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshAll();
 	},
 	createNewFrame: function(description, position, index, romanizedCounter) {
+		this.options.preview.table.setStyle("display", "");
+		this.options.preview.message.setStyle("display", "");
 		var tr = this.options.preview.tr.clone();
 		var tds = tr.getElements("td");
 		description = (description !== undefined && description.length > 0) ? description : tds[1].get("text");
