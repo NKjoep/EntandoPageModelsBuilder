@@ -493,7 +493,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (undefined != testIE && testIE){
 					root = new ActiveXObject('Microsoft.XMLDOM');
 					root.async = false;
-					root.loadXML(string);
+					root.loadXML('<?xml version="1.0"?>\n'+string);
 				} else {
 					root = new DOMParser().parseFromString(string, 'text/xml');
 				}
