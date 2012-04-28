@@ -238,9 +238,20 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	prepareLoadXmlFrames: function() {
 		this.options.loadxml.form.addEvent("submit", function(ev){ev.preventDefault()});
+		if (this.loadedMessageFx===undefined) {
+			this.loadedMessageFx = new Fx.Morph(document.id("template-message-xml-load"), {
+				link: "cancel",
+				duration: 'normal',
+				transition: Fx.Transitions.Sine.easeOut,
+				onComplete: function(ell) {
+					this.loadedMessageFx.start({opacity: 0, display: ["", ""]});
+				}.bind(this)
+			});
+		}
 		this.options.loadxml.button.addEvent("click",function(ev) {
 			ev.preventDefault();
 			this.insertFramesFromXml();
+			this.loadedMessageFx.start({opacity: [1,0], display: ["", ""]});
 		}.bind(this));
 	},
 	preparePreview: function() {
