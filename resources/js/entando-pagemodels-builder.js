@@ -485,28 +485,6 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 		else {
 			xml = this.options.loadxml.xml.get("value").trim();
-		/*
-		var parser;
-		if (window.DOMParser)
-			{
-			parser=new DOMParser();
-			xmlDoc=parser.parseFromString(txt,"text/xml");
-			}
-		else // Internet Explorer
-			{
-			xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
-			xmlDoc.async=false;
-			xmlDoc.loadXML(txt);
-			}
-		var root = xmlDoc.getElementsByTagName("frames")[0];
-		Array.each(root.childNodes, function(child) {
-			var pos = child.getAttribute("pos");
-			var descr = child.getElementsByTagName("descr")[0].childNodes[0].nodeValue;
-			new Element("p", {
-					text: pos+" |"+descr
-			}).inject(document.body);
-		});
-		*/			
 		}
 		var rootFromString = function rootFromString(string) {
 			var root = null;
@@ -563,12 +541,6 @@ var NewEntandoPageModelsBuilder = new Class({
 								};
 							}
 							else {
-								/*obj.frames.push({
-									//pos: pos,
-									pos: index,
-									descr: descr
-								});
-								*/
 								framesWithNoValidPos.push({
 									pos: index,
 									descr: descr
@@ -576,7 +548,6 @@ var NewEntandoPageModelsBuilder = new Class({
 							}
 						}
 					});
-console.log(framesWithNoValidPos);
 					obj.frames = obj.frames.flatten();
 					obj.frames = obj.frames.sort();
 					Array.each(framesWithNoValidPos, function(item, index){
@@ -585,13 +556,12 @@ console.log(framesWithNoValidPos);
 					});
 				}
 			}
-			console.log(obj);
 			return obj;
 		};
 		this.options.preview.tbody.empty();
 		var frames = extractFrames(xml).frames;
 		Array.each(frames, function(item, index){
-			this.createNewFrame(item.descr, new Number(item.pos).valueOf());
+			this.createNewFrame(item.descr, index);
 		}.bind(this));
 		this.refreshAll();
 	},
