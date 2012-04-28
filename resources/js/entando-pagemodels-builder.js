@@ -532,6 +532,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				var frames = dom.getElementsByTagName("frames")[0];
 				if (frames!==undefined) {
 					frames = frames.getElementsByTagName("frame");
+					var framesWithNoValidPos = [];
 					Array.each(frames, function(child, index) {
 						var pos = child.getAttribute("pos");
 						var descr = child.getElementsByTagName("descr");
@@ -545,17 +546,46 @@ var NewEntandoPageModelsBuilder = new Class({
 							descr = descr.nodeValue;
 						}
 						if (pos!==undefined && descr !== undefined) {
-							pos = pos.trim().replace(/[\n\r\t]/g,"");
+							pos = pos.trim().replace(/[\n\r\ta-zA-Z]/g,"");
+							if (pos.length>0) {
+								pos = new Number(pos).valueOf();
+							}
+							else {
+								pos = null;
+							}
+							pos = (pos !== Infinity && pos !== NaN && pos !== - Infinity && pos >= 0 ? pos : null);
 							descr = descr.trim().replace(/[\n\r\t]/g,"");
-							obj.frames.push({
-								//pos: pos,
-								pos: index,
-								descr: descr
-							});
+							if (pos!==null && obj.frames[pos]===undefined) {
+								obj.frames[pos] = {
+									//pos: pos,
+									pos: pos,
+									descr: descr
+								};
+							}
+							else {
+								/*obj.frames.push({
+									//pos: pos,
+									pos: index,
+									descr: descr
+								});
+								*/
+								framesWithNoValidPos.push({
+									pos: index,
+									descr: descr
+								});
+							}
 						}
+					});
+console.log(framesWithNoValidPos);
+					obj.frames = obj.frames.flatten();
+					obj.frames = obj.frames.sort();
+					Array.each(framesWithNoValidPos, function(item, index){
+						item.pos = obj.frames.length;
+						obj.frames.push(item);
 					});
 				}
 			}
+			console.log(obj);
 			return obj;
 		};
 		this.options.preview.tbody.empty();
