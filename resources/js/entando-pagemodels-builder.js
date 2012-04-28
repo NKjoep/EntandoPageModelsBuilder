@@ -647,17 +647,17 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshXML: function() {
 		var xml = document.id("xml-code");
-		var string = "<frames>\n";
+		var string = "<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
 			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-			string = string + '\t<frame pos="'+pos+'">\n';
-			string = string + '\t\t<descr>'+description+'</descr>\n';
-			string = string + "\t</frame>\n";
+			string = string + '\n\t<frame pos="'+pos+'">';
+			string = string + '\n\t\t<descr>'+description+'</descr>';
+			string = string + "\n\t</frame>";
 		});
-		string = string + "</frames>";
+		string = string + "\n</frames>";
 		xml.set("value", string);
 	},
 	refreshJSP: function() {
@@ -674,17 +674,17 @@ var NewEntandoPageModelsBuilder = new Class({
 	},
 	refreshSQL: function() {
 		var sql = document.id("sql-code");
-		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+"', '<frames>\n";
+		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+"', '<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tds[0].get("text");
 			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-			string = string + '\t<frame pos="'+pos+'">\n';
-			string = string + '\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>\n';
-			string = string + "\t</frame>\n";
+			string = string + '\n\t<frame pos="'+pos+'">';
+			string = string + '\n\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>';
+			string = string + "\n\t</frame>";
 		});
-		string = string + "</frames>', "+ (this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'") +");";
+		string = string + "\n</frames>', "+ (this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'") +");";
 		sql.set("value", string);	
 	}
 });
