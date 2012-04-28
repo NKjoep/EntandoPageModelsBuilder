@@ -485,6 +485,28 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 		else {
 			xml = this.options.loadxml.xml.get("value").trim();
+		/*
+		var parser;
+		if (window.DOMParser)
+			{
+			parser=new DOMParser();
+			xmlDoc=parser.parseFromString(txt,"text/xml");
+			}
+		else // Internet Explorer
+			{
+			xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+			xmlDoc.async=false;
+			xmlDoc.loadXML(txt);
+			}
+		var root = xmlDoc.getElementsByTagName("frames")[0];
+		Array.each(root.childNodes, function(child) {
+			var pos = child.getAttribute("pos");
+			var descr = child.getElementsByTagName("descr")[0].childNodes[0].nodeValue;
+			new Element("p", {
+					text: pos+" |"+descr
+			}).inject(document.body);
+		});
+		*/			
 		}
 		var rootFromString = function rootFromString(string) {
 			var root = null;
@@ -507,33 +529,36 @@ var NewEntandoPageModelsBuilder = new Class({
 			var obj = { "frames": [] };
 			var dom = rootFromString(string);
 			if (dom != null) {
-				var root = Slick.search(dom,"frames");
-				if (root.length > 0) {
-					obj = {};
-					for (var i = 0;i<root.length;i++){
-						var item = root[i];
-						var tag = item.get!==undefined ? item.get("tag") : item.nodeName!==undefined ? item.nodeName : item.tagName;
-						var children = item.getChildren(); 
-						obj[tag] = [];
-						if (children.length > 0) {
-							for (var x=0; x<children.length; x++) {
-								var frame = children[x];
-								var framepos = frame.get("pos");
-								var descrEl = frame.getFirst("descr")
-								var descr = descrEl.innerText || descrEl.textContent;
-								obj[tag].push({
-									"pos": framepos,
-									"descr": descr
-								});
-							}
+				var frames = dom.getElementsByTagName("frames")[0];
+				if (frames!==undefined) {
+					frames = frames.getElementsByTagName("frame");
+					Array.each(frames, function(child, index) {
+						var pos = child.getAttribute("pos");
+						var descr = child.getElementsByTagName("descr");
+						if (descr!==undefined) {
+							descr = descr[0];
 						}
-					}
+						if (descr!==undefined) {
+							descr = descr.childNodes[0];
+						}
+						if (descr!==undefined) {
+							descr = descr.nodeValue;
+						}
+						if (pos!==undefined && descr !== undefined) {
+							pos = pos.trim().replace(/[\n\r\t]/g,"");
+							descr = descr.trim().replace(/[\n\r\t]/g,"");
+							obj.frames.push({
+								//pos: pos,
+								pos: index,
+								descr: descr
+							});
+						}
+					});
 				}
 			}
 			return obj;
 		};
 		this.options.preview.tbody.empty();
-		this.refreshAll();
 		var frames = extractFrames(xml).frames;
 		Array.each(frames, function(item, index){
 			this.createNewFrame(item.descr, new Number(item.pos).valueOf());
