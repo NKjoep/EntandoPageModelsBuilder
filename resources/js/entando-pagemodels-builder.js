@@ -523,7 +523,7 @@ var NewEntandoPageModelsBuilder = new Class({
 						if (descr!==undefined) {
 							descr = descr.nodeValue;
 						}
-						if (pos===undefined) {
+						if (pos===undefined||pos===null) {
 							pos = "";
 						}
 						if (pos!==undefined && descr !== undefined) {
