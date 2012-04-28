@@ -535,12 +535,14 @@ var NewEntandoPageModelsBuilder = new Class({
 							descr = descr.trim().replace(/[\n\r\t]/g,"");
 							if (pos!==null && obj.frames[pos]===undefined) {
 								obj.frames[pos] = {
-									//pos: pos,
 									pos: pos,
 									descr: descr
 								};
 							}
 							else {
+								if (obj.frames[index]===undefined) {
+									obj.frames[index]="fillme";
+								}
 								framesWithNoValidPos.push({
 									pos: index,
 									descr: descr
@@ -548,12 +550,24 @@ var NewEntandoPageModelsBuilder = new Class({
 							}
 						}
 					});
-					obj.frames = obj.frames.flatten();
-					obj.frames = obj.frames.sort();
-					Array.each(framesWithNoValidPos, function(item, index){
-						item.pos = obj.frames.length;
-						obj.frames.push(item);
+					obj.frames = obj.frames.sort(function(a,b){
+						var a = new Number(a.pos).valueOf(); 
+						var b = new Number(b.pos).valueOf();
+						if (a!==NaN&&b!==NaN) return a-b;
+						if (a==NaN&&b!==NaN) return b;
+						if (a!==NaN&&b==NaN) return a;
 					});
+					for (var i = 0; i<obj.frames.length;i++) {
+						if (obj.frames[i] == "fillme") {
+							if (framesWithNoValidPos[0]!==undefined) {
+								obj.frames[i] = framesWithNoValidPos[0];
+								framesWithNoValidPos.shift();
+							} 
+							else {
+								break;
+							}
+						}
+					}
 				}
 			}
 			return obj;
