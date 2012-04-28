@@ -523,6 +523,9 @@ var NewEntandoPageModelsBuilder = new Class({
 						if (descr!==undefined) {
 							descr = descr.nodeValue;
 						}
+						if (pos===undefined) {
+							pos = "";
+						}
 						if (pos!==undefined && descr !== undefined) {
 							pos = pos.trim().replace(/[\n\r\ta-zA-Z]/g,"");
 							if (pos.length>0) {
