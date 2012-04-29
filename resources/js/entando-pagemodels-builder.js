@@ -718,7 +718,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			var tdDescr = tr.getElement(".description");
 			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value") ;
 			var main = (tr.getElement(this.options.preview.mainframe_selector).get("checked") == true) ? ' //your main frame' : '';
-			string = string + '<%-- '+description+main+' --%>\n';
+			string = string + '<%-- '+pos+'. '+description+main+' --%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		}.bind(this));
 		this.options.code.jsp.set("value", string);	
