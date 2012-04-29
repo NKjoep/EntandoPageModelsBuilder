@@ -2,18 +2,19 @@ var NewEntandoPageModelsBuilder = new Class({
 	Implements: [Events, Options],
 	options: {},
 	initialize: function() {
-		this.setOptions();
 		this.options.addframes = {
 			form: document.getElement('form[action$="#addFrames"]'),
 			description: document.getElement('form[action$="#addFrames"]').getElement('[name="description"]'),
 			howmany: document.getElement('form[action$="#addFrames"]').getElement('[name="how-many"]'),
 			position: document.getElement('form[action$="#addFrames"]').getElement('[name="position"]'),
-			button: document.getElement('form[action$="#addFrames"]').getElement('[name="action:add"]')
+			button: document.getElement('form[action$="#addFrames"]').getElement('[name="action:add"]'),
+			addSingle: document.id("add-single-frame")
 		};
 		this.options.loadxml = {
 			form: document.getElement('form[action$="#loadXml"]'),
 			xml: document.getElement('form[action$="#loadXml"]').getElement('[name="xml-source"]'),
-			button: document.getElement('form[action$="#loadXml"]').getElement('[name="action:load"]')
+			button: document.getElement('form[action$="#loadXml"]').getElement('[name="action:load"]'),
+			message: document.id("template-message-xml-load")
 		}
 		this.options.preview = {
 			table: document.getElement(".preview-table"), 
@@ -21,6 +22,23 @@ var NewEntandoPageModelsBuilder = new Class({
 			tr: document.getElement(".preview-table").getElement(".preview-sample"),	
 			message: document.getElement(".preview-table").getNext("p")
 		};
+		this.options.code = {
+			xml: document.id("xml-code"),
+			jsp: document.id("jsp-code"),
+			sql: document.id("sql-code")
+		};
+		this.options.saveArea = {
+			saveButton: document.id("save"),
+			saveMessage: document.id("template-message-saved"), 
+			savedModelsContainer: document.id("saved-models"),
+			disabledElementsWhenNoStorage: document.getElements(".localStorage-disabled")
+		};
+		this.options.metaData = {
+			title: document.id("title"),
+			code: document.id("code"),
+			plugincode: document.id("plugincode")
+		};
+		this.setOptions();
 		this.setupMetaData();
 		this.setupStorage();
 		this.prepareAddFrames();
@@ -31,20 +49,20 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.prepareCodeArea();
 	},
 	prepareCodeArea: function() {
-		document.id("xml-code").addEvent("click", function(ev){
+		this.options.code.xml.addEvent("click", function(ev){
 			ev.target.select();
 		});
-		document.id("jsp-code").addEvent("click", function(ev){
+		this.options.code.jsp.addEvent("click", function(ev){
 			ev.target.select();
 		});
-		document.id("sql-code").addEvent("click", function(ev){
+		this.options.code.sql.addEvent("click", function(ev){
 			ev.target.select();
 		});
 	},
 	setupStorage: function() {
 		if (window.localStorage!==undefined) {
 			this.storedModels = window.localStorage.getItem("entando-page-models-builder-config");
-			document.getElements(".localStorage-disabled").removeClass("localStorage-disabled");
+			this.options.saveArea.disabledElementsWhenNoStorage.removeClass("localStorage-disabled");
 			if (this.storedModels!==undefined && this.storedModels!==null && this.storedModels.length >0) {
 				this.storedModels = JSON.decode(this.storedModels);
 				if (!(typeOf(this.storedModels) == 'object')) {
@@ -55,7 +73,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				this.storedModels = {};
 			}
 			if (this.savedmessageFx===undefined) {
-				this.savedmessageFx = new Fx.Morph(document.id("template-message-saved"), {
+				this.savedmessageFx = new Fx.Morph(this.options.saveArea.saveMessage, {
 					link: "cancel",
 					duration: 'normal',
 					transition: Fx.Transitions.Sine.easeOut,
@@ -64,13 +82,13 @@ var NewEntandoPageModelsBuilder = new Class({
 					}.bind(this)
 				});
 			}
-			document.id("save").addEvent("click", function(ev){
+			this.options.saveArea.saveButton.addEvent("click", function(ev){
 				ev.preventDefault();
 				this.storeModel();
 				this.savedmessageFx.start({opacity: [1,0], display: ["", ""]});
 			}.bind(this));
 			this.restoreModelsList();
-			document.id("saved-models").addEvent("click:relay(.load-model)", function(ev) {
+			this.options.saveArea.savedModelsContainer.addEvent("click:relay(.load-model)", function(ev) {
 				ev.preventDefault();
 				this.loadStoredModel(ev.target.getParent().retrieve("code"));
 				new Fx.Morph(ev.target, {
@@ -84,7 +102,7 @@ var NewEntandoPageModelsBuilder = new Class({
 					}
 				}).start({opacity: [1,0]});
 			}.bind(this));
-			document.id("saved-models").addEvent("click:relay(.close)", function(ev) {
+			this.options.saveArea.savedModelsContainer.addEvent("click:relay(.close)", function(ev) {
 				ev.preventDefault();
 				var parent = ev.target.getParent();
 				this.unStoreModel(parent.retrieve("code"));
@@ -98,7 +116,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			}.bind(this));
 		}
 		else {
-			document.getElements(".localStorage-disabled").destroy();
+			this.options.saveArea.disabledElementsWhenNoStorage.destroy();
 		}
 	},
 	storeModel: function() {
@@ -107,7 +125,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			title: this.title,
 			code: this.code,
 			plugincode: this.plugincode,
-			xml: document.id("xml-code").get("value"),
+			xml: this.options.code.xml.get("value"),
 			date: (date.getDate()<10?"0"+date.getDate() : date.getDate()) + "/" + (date.getMonth()<10?"0"+date.getMonth() : date.getMonth()) + "/" + date.getFullYear() + " " + (date.getHours()<10?"0"+date.getHours() : date.getHours()) + ":" + (date.getMinutes()<10?"0"+date.getMinutes() : date.getMinutes()) + ":" + (date.getSeconds()<10?"0"+date.getSeconds() : date.getSeconds())
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
@@ -119,12 +137,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		}.bind(this));
 	},
 	createSavedModelButtonLoader: function(item) {
-			/*<div class="alert-box success">
-				<span href="">Title / Code</a>
-				<a href="" class="close delete-model">&times;</a>
-			</div>*/
-			var container = document.id("saved-models");
-			var previous = container.getElement("#model_"+item.code);
+			var previous = this.options.saveArea.savedModelsContainer.getElement("#model_"+item.code);
 				var div = new Element("div", {
 					"class": "alert-box success",
 					"id": "model_"+item.code
@@ -135,7 +148,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				}
 				else {
 					div.setStyle("opacity", "0");
-					div.inject(container);
+					div.inject(this.options.saveArea.savedModelsContainer);
 					new Fx.Morph(div, {
 						duration: 'short',
 						transition: Fx.Transitions.Sine.easeOut
@@ -162,9 +175,9 @@ var NewEntandoPageModelsBuilder = new Class({
 		var modelObj = this.storedModels[code];
 		if (modelObj!==undefined) {
 			this.insertFramesFromXml(modelObj.xml);
-			document.id("title").set("value", modelObj.title);
-			document.id("code").set("value", modelObj.code);
-			document.id("plugincode").set("value", (modelObj.plugincode=='NULL'? "" : modelObj.plugincode));
+			this.options.metaData.title.set("value", modelObj.title);
+			this.options.metaData.code.set("value", modelObj.code);
+			this.options.metaData.plugincode.set("value", (modelObj.plugincode=='NULL'? "" : modelObj.plugincode));
 			this.title=modelObj.title;
 			this.code=modelObj.code;
 			this.plugincode=modelObj.plugincode;
@@ -176,26 +189,26 @@ var NewEntandoPageModelsBuilder = new Class({
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
 	},
 	setupMetaData: function() {
-		this.title = document.id("title").get("value") != null && document.id("title").get("value") != "" ? document.id("title").get("value") : document.id("title").getProperty("placeholder");
-		this.code = document.id("code").get("value") != null && document.id("code").get("value") != "" ? document.id("code").get("value") : document.id("code").getProperty("placeholder");
-		this.plugincode = document.id("plugincode").get("value") != null && document.id("plugincode").get("value") != "" ? document.id("plugincode").get("value") : "NULL";
-		document.id("title").addEvent("change", function(ev){
+		this.title = this.options.metaData.title.get("value") != null && this.options.metaData.title.get("value") != "" ? this.options.metaData.title.get("value") : this.options.metaData.title.getProperty("placeholder");
+		this.code = this.options.metaData.code.get("value") != null && this.options.metaData.code.get("value") != "" ? this.options.metaData.code.get("value") : this.options.metaData.code.getProperty("placeholder");
+		this.plugincode = this.options.metaData.plugincode.get("value") != null && this.options.metaData.plugincode.get("value") != "" ? this.options.metaData.plugincode.get("value") : "NULL";
+		this.options.metaData.title.addEvent("change", function(ev){
 			this.title = ev.target.get("value");
 			this.refreshSQL();
 		}.bind(this));
-		document.id("title").addEvent("keydown", function(ev){
+		this.options.metaData.title.addEvent("keydown", function(ev){
 			if(ev.key == 'enter'){
 				ev.preventDefault();
 				this.title = ev.target.get("value");
 				this.refreshSQL();
 			}
 		}.bind(this));
-		document.id("code").addEvent("change", function(ev){
+		this.options.metaData.code.addEvent("change", function(ev){
 			this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
 			ev.target.set("value",this.code);
 			this.refreshSQL();
 		}.bind(this));
-		document.id("code").addEvent("keydown", function(ev){
+		this.options.metaData.code.addEvent("keydown", function(ev){
 			if(ev.key == 'enter'){
 				ev.preventDefault();
 				this.code = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
@@ -203,7 +216,7 @@ var NewEntandoPageModelsBuilder = new Class({
 				this.refreshSQL();
 			}
 		}.bind(this));
-		document.id("plugincode").addEvent("change", function(ev){
+		this.options.metaData.plugincode.addEvent("change", function(ev){
 			this.plugincode = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
 			if (this.plugincode.length<=0) {
 				this.plugincode = "NULL";
@@ -214,7 +227,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			}
 			this.refreshSQL();
 		}.bind(this));
-		document.id("plugincode").addEvent("keydown", function(ev){
+		this.options.metaData.plugincode.addEvent("keydown", function(ev){
 			if(ev.key == 'enter'){
 				ev.preventDefault();
 				this.plugincode = ev.target.get("value").replace(/[^\w\d_\-\.]/g,"");
@@ -239,7 +252,7 @@ var NewEntandoPageModelsBuilder = new Class({
 	prepareLoadXmlFrames: function() {
 		this.options.loadxml.form.addEvent("submit", function(ev){ev.preventDefault()});
 		if (this.loadedMessageFx===undefined) {
-			this.loadedMessageFx = new Fx.Morph(document.id("template-message-xml-load"), {
+			this.loadedMessageFx = new Fx.Morph(this.options.loadxml.message, {
 				link: "cancel",
 				duration: 'normal',
 				transition: Fx.Transitions.Sine.easeOut,
@@ -411,7 +424,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		});
 	},
 	prepareAddSingleFrame: function() {
-		document.id("add-single-frame").addEvent("click", function(ev){
+		this.options.addframes.addSingle.addEvent("click", function(ev){
 			ev.preventDefault();
 			this.createNewFrame();
 			this.refreshAll();
@@ -646,7 +659,6 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.setupSortable();
 	},
 	refreshXML: function() {
-		var xml = document.id("xml-code");
 		var string = "<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
@@ -658,10 +670,9 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + "\n\t</frame>";
 		});
 		string = string + "\n</frames>";
-		xml.set("value", string);
+		this.options.code.xml.set("value", string);
 	},
 	refreshJSP: function() {
-		var jsp = document.id("jsp-code");
 		var string = '<%@ taglib prefix="wp" uri="/aps-core" %>\n\n';
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
@@ -670,10 +681,9 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + '<%-- '+description+' --%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		});
-		jsp.set("value", string);	
+		this.options.code.jsp.set("value", string);	
 	},
 	refreshSQL: function() {
-		var sql = document.id("sql-code");
 		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+"', '<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
@@ -685,7 +695,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			string = string + "\n\t</frame>";
 		});
 		string = string + "\n</frames>', "+ (this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'") +");";
-		sql.set("value", string);	
+		this.options.code.sql.set("value", string);	
 	}
 });
 window.addEvent("domready", function(){
@@ -698,10 +708,10 @@ window.addEvent("domready", function(){
 		document.getElement('a[href="#codeSQL"]')
 		], function(item) {
 		item.addEvent("click", function(){
-			var a = function(){
+			var fn = function(){
 				$(window).trigger('resize');
 			};
-			a.delay(35);
+			fn.delay(35);
 		});
 	});
 })
