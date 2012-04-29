@@ -436,6 +436,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			this.options.preview.tbody.getElements(this.options.preview.mainframe_selector).set("checked", false);
 			ev.target.set("checked", status);
 			this.refreshXML();
+			this.refreshJSP();
 			this.refreshSQL();
 		}.bind(this));
 	},
@@ -701,7 +702,8 @@ var NewEntandoPageModelsBuilder = new Class({
 			var tdDescr = tr.getElement(".description");
 			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value") ;
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-			string = string + '\n\t<frame pos="'+pos+'"'+(tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '')+'>';
+			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
+			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			string = string + "\n\t</frame>";
 		}.bind(this));
@@ -712,25 +714,29 @@ var NewEntandoPageModelsBuilder = new Class({
 		var string = '<%@ taglib prefix="wp" uri="/aps-core" %>\n\n';
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
-			var pos = tds[0].get("text");
-			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
-			string = string + '<%-- '+description+' --%>\n';
+			var pos = tr.getElement(".position").get("text");
+			var tdDescr = tr.getElement(".description");
+			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value") ;
+			var main = (tr.getElement(this.options.preview.mainframe_selector).get("checked") == true) ? ' //your main frame' : '';
+			string = string + '<%-- '+description+main+' --%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
-		});
+		}.bind(this));
 		this.options.code.jsp.set("value", string);	
 	},
 	refreshSQL: function() {
 		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+"', '<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
-			var pos = tds[0].get("text");
-			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
-			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-			string = string + '\n\t<frame pos="'+pos+'"'+(tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '')+'>';
-			string = string + '\n\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>';
+			var pos = tr.getElement(".position").get("text");
+			var tdDescr = tr.getElement(".description");
+			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value");
+			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
+			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
+			string = string + '\n\t\t<descr>'+description+'</descr>';
 			string = string + "\n\t</frame>";
 		}.bind(this));
-		string = string + "\n</frames>', "+ (this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'") +");";
+		string = string + "\n</frames>', "+(this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'")+");";
 		this.options.code.sql.set("value", string);	
 	}
 });
