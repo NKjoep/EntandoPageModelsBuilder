@@ -33,12 +33,12 @@ a.action-delete:visited {
 
 a.action-up:hover,
 a.action-down:hover {
-	background-color: transparent;
-	color: #7FAE00;
+	background-color: #fff;
+	color: #000;
 }
 
 a.action-delete:hover {
-	background-color: transparent;
+	background-color: #fff;
 	color: #E91C21;
 }
 
@@ -66,6 +66,16 @@ dl.contained.tabs dd a {
 	-webkit-border-radius: 4px 4px 0px 0px;
 	border-radius: 4px 4px 0px 0px;
 	margin-right: 3px;
+}
+
+dl.contained.tabs dd a:hover {
+	background-color: #F5F5F5;
+}
+
+dl.contained.tabs dd a.active:hover {
+	background-color: #fff;
+	cursor: default;
+
 }
 
 .preview-sample {
@@ -123,14 +133,14 @@ dl.contained.tabs dd a {
 	-o-transition: background 280ms linear;
 	transition: background 280ms linear;
 	cursor: move;
-background: #bcd296; /* Old browsers */
-background: -moz-linear-gradient(top, #bcd296 0%, #c0d4a0 50%, #aed076 51%, #acd466 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bcd296), color-stop(50%,#c0d4a0), color-stop(51%,#aed076), color-stop(100%,#acd466)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* IE10+ */
-background: linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bcd296', endColorstr='#acd466',GradientType=0 ); /* IE6-9 */
+	background: #bcd296; /* Old browsers */
+	background: -moz-linear-gradient(top, #bcd296 0%, #c0d4a0 50%, #aed076 51%, #acd466 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bcd296), color-stop(50%,#c0d4a0), color-stop(51%,#aed076), color-stop(100%,#acd466)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* IE10+ */
+	background: linear-gradient(top, #bcd296 0%,#c0d4a0 50%,#aed076 51%,#acd466 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bcd296', endColorstr='#acd466',GradientType=0 ); /* IE6-9 */
 }
 
 .preview-sample .description input {
@@ -171,6 +181,7 @@ textarea {
 a.label.blue:focus {
 	color: #fff;
 }
+
 td.main input {
 	cursor: pointer;
 }
