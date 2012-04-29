@@ -20,7 +20,8 @@ var NewEntandoPageModelsBuilder = new Class({
 			table: document.getElement(".preview-table"), 
 			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
 			tr: document.getElement(".preview-table").getElement(".preview-sample"),	
-			message: document.getElement(".preview-table").getNext("p")
+			message: document.getElement(".preview-table").getNext("p"),
+			mainframe_selector: '[name="main-frame"]'
 		};
 		this.options.code = {
 			xml: document.id("xml-code"),
@@ -268,6 +269,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		}.bind(this));
 	},
 	preparePreview: function() {
+		this.options.preview.disabled=true;
 		this.options.preview.tr.dispose();
 		this.options.preview.tbody.addEvent("click:relay(a.action-delete)", function(ev) {
 				ev.preventDefault();
@@ -287,19 +289,23 @@ var NewEntandoPageModelsBuilder = new Class({
 				var tr = ev.target.getParent("tr");
 				var trUp = tr.getPrevious();
 				if (trUp!=null) {
-					var trUpPos = trUp.getElements("td")[0].get("text");
-					var trPos = tr.getElements("td")[0].get("text");
+					var trUpPos = trUp.getElement(".position").get("text");
+					var trPos = tr.getElement(".position").get("text");
 					new Fx.Morph(tr, {
 						trUpPos: trUpPos,
 						trUp: trUp,
-						refresh: this.refreshAll.bind(this),
+						refreshAll: this.refreshAll.bind(this),
 						onComplete: function(tr) {
 							var trUpPos = this.options.trUpPos;
 							var trUp = this.options.trUp;
 							tr.getElements("td")[0].set("text", trUpPos);
 							tr.inject(trUp, "before");
-							this.options.refresh();
-							new Fx.Morph(tr).start({opacity: [0,1]});
+							new Fx.Morph(tr, {
+								refreshAll: this.options.refreshAll,
+								onComplete: function() {
+									this.options.refreshAll();
+								}
+							}).start({opacity: [0,1]});
 						}
 					}).start({opacity: [1,0]});
 					new Fx.Morph(trUp, {
@@ -317,28 +323,31 @@ var NewEntandoPageModelsBuilder = new Class({
 				var tr = ev.target.getParent("tr");
 				var trDown = tr.getNext();
 				if (trDown!=null) {
-					var trDownPos = trDown.getElements("td")[0].get("text");
-					var trPos = tr.getElements("td")[0].get("text");
+					var trDownPos = trDown.getElement(".position").get("text");
+					var trPos = tr.getElement(".position").get("text");
 					new Fx.Morph(tr, {
 						trDownPos: trDownPos,
 						trDown: trDown,
-						refresh: this.refreshAll.bind(this),
 						onComplete: function(tr){
 							var trDownPos = this.options.trDownPos;
-							tr.getElements("td")[0].set("text", trDownPos);
+							tr.getElement(".position").set("text", trDownPos);
 							new Fx.Morph(tr).start({opacity: [0,1]});
 						}
 					}).start({opacity: [1,0]});
 					new Fx.Morph(trDown, {
 						trPos: trPos,
 						tr: tr,
-						refresh: this.refreshAll.bind(this),
+						refreshAll: this.refreshAll.bind(this),
 						onComplete: function(trDown){
 							var trPos = this.options.trPos;
-							trDown.getElements("td")[0].set("text", trPos);
+							trDown.getElement(".position").set("text", trPos);
 							trDown.inject(tr, "before");
-							this.options.refresh();
-							new Fx.Morph(trDown).start({opacity: [0,1]});
+							new Fx.Morph(trDown, {
+								refreshAll: this.options.refreshAll,
+								onComplete: function(trDown){
+									this.options.refreshAll();
+								}
+							}).start({opacity: [0,1]});
 						}
 					}).start({opacity: [1,0]});
 				}
@@ -422,6 +431,13 @@ var NewEntandoPageModelsBuilder = new Class({
 			ev.target.getParent("tr").removeClass("while-mousedown");
 			ev.target.getParent("tr").addClass("mouseup");
 		});
+		this.options.preview.tbody.addEvent("change:relay("+this.options.preview.mainframe_selector+")", function(ev){
+			var status = ev.target.get("checked");
+			this.options.preview.tbody.getElements(this.options.preview.mainframe_selector).set("checked", false);
+			ev.target.set("checked", status);
+			this.refreshXML();
+			this.refreshSQL();
+		}.bind(this));
 	},
 	prepareAddSingleFrame: function() {
 		this.options.addframes.addSingle.addEvent("click", function(ev){
@@ -452,9 +468,13 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshPreviewPositions(position+howmany);
 		this.refreshAll();
 	},
-	createNewFrame: function(description, position, index, romanizedCounter) {
-		this.options.preview.table.setStyle("display", "");
-		this.options.preview.message.setStyle("display", "");
+	createNewFrame: function(description, position, index, romanizedCounter, main) {
+		if (this.options.preview.disabled) {
+			this.options.preview.table.setStyle("display", "");
+			this.options.preview.message.setStyle("display", "");
+			$(window).trigger('resize');
+			this.options.preview.disabled=false;
+		} 
 		var tr = this.options.preview.tr.clone();
 		var tds = tr.getElements("td");
 		description = (description !== undefined && description.length > 0) ? description : tds[1].get("text");
@@ -482,6 +502,9 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 		else {
 			this.sortable.addItems(tr);
+		}
+		if (main!==undefined&&main==true) {
+			tr.getElement(this.options.preview.mainframe_selector).set("checked", true);
 		}
 		return tr;
 	},
@@ -535,9 +558,11 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (frames!==undefined) {
 					frames = frames.getElementsByTagName("frame");
 					var framesWithNoValidPos = [];
+					var mainDiscovered = false;
 					Array.each(frames, function(child, index) {
 						var pos = child.getAttribute("pos");
 						var descr = child.getElementsByTagName("descr");
+						var main = child.getAttribute("main");
 						if (descr!==undefined) {
 							descr = descr[0];
 						}
@@ -550,7 +575,16 @@ var NewEntandoPageModelsBuilder = new Class({
 						if (pos===undefined||pos===null) {
 							pos = "";
 						}
-						if (pos!==undefined && descr !== undefined) {
+						if (descr===undefined) {
+							descr = "Untitled Frame";
+						}
+						if (main!==undefined && main!==null && !mainDiscovered) {
+							main = true;
+							mainDiscovered=true;
+						}
+						else {
+							main = false;
+						}
 							pos = pos.trim().replace(/[\n\r\ta-zA-Z]/g,"");
 							if (pos.length>0) {
 								pos = new Number(pos).valueOf();
@@ -563,7 +597,8 @@ var NewEntandoPageModelsBuilder = new Class({
 							if (pos!==null && obj.frames[pos]===undefined) {
 								obj.frames[pos] = {
 									pos: pos,
-									descr: descr
+									descr: descr,
+									main: main
 								};
 							}
 							else {
@@ -572,10 +607,10 @@ var NewEntandoPageModelsBuilder = new Class({
 								}
 								framesWithNoValidPos.push({
 									pos: index,
-									descr: descr
+									descr: descr,
+									main: main
 								});
 							}
-						}
 					});
 					obj.frames = obj.frames.sort(function(a,b){
 						var a = new Number(a.pos).valueOf(); 
@@ -602,7 +637,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.options.preview.tbody.empty();
 		var frames = extractFrames(xml).frames;
 		Array.each(frames, function(item, index){
-			this.createNewFrame(item.descr, index);
+			this.createNewFrame(item.descr, index, undefined, false, item.main);
 		}.bind(this));
 		this.refreshAll();
 	},
@@ -662,13 +697,14 @@ var NewEntandoPageModelsBuilder = new Class({
 		var string = "<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
-			var pos = tds[0].get("text");
-			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
+			var pos = tr.getElement(".position").get("text");
+			var tdDescr = tr.getElement(".description");
+			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value") ;
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-			string = string + '\n\t<frame pos="'+pos+'">';
+			string = string + '\n\t<frame pos="'+pos+'"'+(tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '')+'>';
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			string = string + "\n\t</frame>";
-		});
+		}.bind(this));
 		string = string + "\n</frames>";
 		this.options.code.xml.set("value", string);
 	},
@@ -690,10 +726,10 @@ var NewEntandoPageModelsBuilder = new Class({
 			var pos = tds[0].get("text");
 			var description = tds[1].getElement("input")==null ? tds[1].get("text") : tds[1].getElement("input").get("value") ;
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-			string = string + '\n\t<frame pos="'+pos+'">';
+			string = string + '\n\t<frame pos="'+pos+'"'+(tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '')+'>';
 			string = string + '\n\t\t<descr>'+description.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+'</descr>';
 			string = string + "\n\t</frame>";
-		});
+		}.bind(this));
 		string = string + "\n</frames>', "+ (this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'") +");";
 		this.options.code.sql.set("value", string);	
 	}
