@@ -171,3 +171,6 @@ textarea {
 a.label.blue:focus {
 	color: #fff;
 }
+td.main input {
+	cursor: pointer;
+}
