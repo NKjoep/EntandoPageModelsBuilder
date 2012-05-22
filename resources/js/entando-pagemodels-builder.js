@@ -448,18 +448,15 @@ var NewEntandoPageModelsBuilder = new Class({
 				if (newValue!==undefined&&newValue!==null) {
 					newValue = newValue.replace(/[^\w\d\_\-]/g, "");
 					ev.target.set("value", newValue);
-					console.log("nuovo valore, refresh");
 					this.refreshXML();
 					this.refreshJSP();
 					this.refreshSQL();
 				}
 				else {
-					console.log("annullato, non faccio niente");
 					ev.target.set("checked", "");
 				}
 			}
 			else {
-				console.log("spento, aggiorno.");
 				this.refreshXML();
 				this.refreshJSP();
 				this.refreshSQL();
