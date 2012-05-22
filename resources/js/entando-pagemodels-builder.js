@@ -593,7 +593,6 @@ var NewEntandoPageModelsBuilder = new Class({
 						var descr = child.getElementsByTagName("descr");
 						var main = child.getAttribute("main");
 						var defaultShowlet = child.getElementsByTagName("defaultShowlet");
-						console.log(defaultShowlet);
 						if (descr!==undefined) {
 							descr = descr[0];
 						}
