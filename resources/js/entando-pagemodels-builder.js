@@ -497,7 +497,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshPreviewPositions(position+howmany);
 		this.refreshAll();
 	},
-	createNewFrame: function(description, position, index, romanizedCounter, main) {
+	createNewFrame: function(description, position, index, romanizedCounter, main, defaultShowlet) {
 		if (this.options.preview.disabled) {
 			this.options.preview.table.setStyle("display", "");
 			this.options.preview.message.setStyle("display", "");
@@ -534,6 +534,10 @@ var NewEntandoPageModelsBuilder = new Class({
 		}
 		if (main!==undefined&&main==true) {
 			tr.getElement(this.options.preview.mainframe_selector).set("checked", true);
+		}
+		if (defaultShowlet!==undefined&&defaultShowlet.length>0) {
+			tr.getElement(this.options.preview.default_showlet_selector).set("checked", true);
+			tr.getElement(this.options.preview.default_showlet_selector).set("value", defaultShowlet);
 		}
 		return tr;
 	},
@@ -615,6 +619,16 @@ var NewEntandoPageModelsBuilder = new Class({
 						else {
 							main = false;
 						}
+						var defaultShowletCode = "";
+						if (defaultShowlet!==undefined) {
+							defaultShowlet = defaultShowlet[0];
+							if (defaultShowlet!==undefined) {
+								defaultShowletCode = defaultShowlet.getAttribute("code");
+								if (defaultShowletCode!==undefined&&defaultShowletCode!==null) {
+									defaultShowletCode= defaultShowletCode.replace(/[^\w\d\_\-]/g,"");
+								}
+							}
+						}
 							pos = pos.trim().replace(/[\n\r\ta-zA-Z]/g,"");
 							if (pos.length>0) {
 								pos = new Number(pos).valueOf();
@@ -628,7 +642,8 @@ var NewEntandoPageModelsBuilder = new Class({
 								obj.frames[pos] = {
 									pos: pos,
 									descr: descr,
-									main: main
+									main: main,
+									defaultShowlet: defaultShowletCode 
 								};
 							}
 							else {
@@ -638,7 +653,8 @@ var NewEntandoPageModelsBuilder = new Class({
 								framesWithNoValidPos.push({
 									pos: index,
 									descr: descr,
-									main: main
+									main: main,
+									defaultShowlet: defaultShowletCode 
 								});
 							}
 					});
@@ -667,7 +683,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.options.preview.tbody.empty();
 		var frames = extractFrames(xml).frames;
 		Array.each(frames, function(item, index){
-			this.createNewFrame(item.descr, index, undefined, false, item.main);
+			this.createNewFrame(item.descr, index, undefined, false, item.main, item.defaultShowlet);
 		}.bind(this));
 		this.refreshAll();
 	},
@@ -779,9 +795,12 @@ var NewEntandoPageModelsBuilder = new Class({
 			var main = (tr.getElement(this.options.preview.mainframe_selector).get("checked") == true) ? ' //the main frame' : '';
 			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
 			if(defaultShowlet.get("checked")) {
-				defaultShowlet = defaultShowlet.get("value");
+				defaultShowlet = "("+defaultShowlet.get("value")+")";
 			}
-			string = string + '<%-- '+pos+'. '+description+main+' ('+defaultShowlet+')--%>\n';
+			else { 
+				defaultShowlet = ""; 
+			}
+			string = string + '<%-- '+pos+'. '+description+main+' '+defaultShowlet+'--%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		}.bind(this));
 		this.options.code.jsp.set("value", string);	
