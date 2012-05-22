@@ -21,7 +21,8 @@ var NewEntandoPageModelsBuilder = new Class({
 			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
 			tr: document.getElement(".preview-table").getElement(".preview-sample"),	
 			message: document.getElement(".preview-table").getNext("p"),
-			mainframe_selector: '[name="main-frame"]'
+			mainframe_selector: '[name="main-frame"]',
+			default_showlet_selector: '[name="default-showlet"]'
 		};
 		this.options.code = {
 			xml: document.id("xml-code"),
@@ -439,6 +440,33 @@ var NewEntandoPageModelsBuilder = new Class({
 			this.refreshJSP();
 			this.refreshSQL();
 		}.bind(this));
+		this.options.preview.tbody.addEvent("change:relay("+this.options.preview.default_showlet_selector+")", function(ev){
+			var status = ev.target.get("checked");
+			if (status) {
+				var oldValue = ev.target.get("value") || "";
+				var newValue = prompt("Default Showlet", oldValue);
+				if (newValue!==undefined&&newValue!==null) {
+					newValue = newValue.replace(/[^\w\d\_\-]/g, "");
+					if (newValue.length>0&&newValue!=oldValue) {
+						ev.target.set("value", newValue);
+						this.refreshXML();
+						this.refreshJSP();
+						this.refreshSQL();
+					}
+					else if (newValue.length==0) {
+						ev.target.set("checked", "");
+					}
+				}
+				else {
+					ev.target.set("checked", "");
+				}
+			}
+			else {
+				this.refreshXML();
+				this.refreshJSP();
+				this.refreshSQL();
+			}
+		}.bind(this));
 	},
 	prepareAddSingleFrame: function() {
 		this.options.addframes.addSingle.addEvent("click", function(ev){
@@ -564,6 +592,8 @@ var NewEntandoPageModelsBuilder = new Class({
 						var pos = child.getAttribute("pos");
 						var descr = child.getElementsByTagName("descr");
 						var main = child.getAttribute("main");
+						var defaultShowlet = child.getElementsByTagName("defaultShowlet");
+						console.log(defaultShowlet);
 						if (descr!==undefined) {
 							descr = descr[0];
 						}
@@ -728,8 +758,12 @@ var NewEntandoPageModelsBuilder = new Class({
 			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value") ;
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
+			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
 			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			string = string + '\n\t\t<descr>'+description+'</descr>';
+			if(defaultShowlet.get("checked")) {
+				string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
+			}
 			string = string + "\n\t</frame>";
 		}.bind(this));
 		string = string + "\n</frames>";
@@ -741,9 +775,14 @@ var NewEntandoPageModelsBuilder = new Class({
 			var tds = tr.getElements("td");
 			var pos = tr.getElement(".position").get("text");
 			var tdDescr = tr.getElement(".description");
+			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
 			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value") ;
 			var main = (tr.getElement(this.options.preview.mainframe_selector).get("checked") == true) ? ' //the main frame' : '';
-			string = string + '<%-- '+pos+'. '+description+main+' --%>\n';
+			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
+			if(defaultShowlet.get("checked")) {
+				defaultShowlet = defaultShowlet.get("value");
+			}
+			string = string + '<%-- '+pos+'. '+description+main+' ('+defaultShowlet+')--%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		}.bind(this));
 		this.options.code.jsp.set("value", string);	
@@ -757,8 +796,12 @@ var NewEntandoPageModelsBuilder = new Class({
 			var description = tdDescr.getElement("input")==null ? tdDescr.get("text") : tdDescr.getElement("input").get("value");
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
+			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
 			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			string = string + '\n\t\t<descr>'+description+'</descr>';
+			if(defaultShowlet.get("checked")) {
+				string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
+			}
 			string = string + "\n\t</frame>";
 		}.bind(this));
 		string = string + "\n</frames>', "+(this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'")+");";
