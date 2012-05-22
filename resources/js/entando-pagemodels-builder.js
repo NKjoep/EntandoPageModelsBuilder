@@ -447,21 +447,19 @@ var NewEntandoPageModelsBuilder = new Class({
 				var newValue = prompt("Default Showlet", oldValue);
 				if (newValue!==undefined&&newValue!==null) {
 					newValue = newValue.replace(/[^\w\d\_\-]/g, "");
-					if (newValue.length>0&&newValue!=oldValue) {
-						ev.target.set("value", newValue);
-						this.refreshXML();
-						this.refreshJSP();
-						this.refreshSQL();
-					}
-					else if (newValue.length==0) {
-						ev.target.set("checked", "");
-					}
+					ev.target.set("value", newValue);
+					console.log("nuovo valore, refresh");
+					this.refreshXML();
+					this.refreshJSP();
+					this.refreshSQL();
 				}
 				else {
+					console.log("annullato, non faccio niente");
 					ev.target.set("checked", "");
 				}
 			}
 			else {
+				console.log("spento, aggiorno.");
 				this.refreshXML();
 				this.refreshJSP();
 				this.refreshSQL();
