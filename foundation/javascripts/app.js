@@ -1,3 +1,4 @@
+/* Foundation v2.2.1 http://foundation.zurb.com */
 jQuery(document).ready(function ($) {
 
 	/* Use this js doc for all application specific JS */
@@ -21,9 +22,13 @@ jQuery(document).ready(function ($) {
 		$(contentLocation).css('display', 'block');
 	}
 
-  $('dl.tabs dd a').live('click', function (event) {
-    activateTab($(this));
-  });
+	$('dl.tabs').each(function () {
+		//Get all tabs
+		var tabs = $(this).children('dd').children('a');
+		tabs.click(function (e) {
+			activateTab($(this));
+		});
+	});
 
 	if (window.location.hash) {
 		activateTab($('a[href="' + window.location.hash + '"]'));
