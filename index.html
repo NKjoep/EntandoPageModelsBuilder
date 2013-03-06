@@ -36,6 +36,14 @@
 	<script src="resources/js/lib/mootools-core.js"></script>
 	<script src="resources/js/lib/mootools-more.js"></script>
 	<script src="resources/js/entando-pagemodels-builder.js"></script>
+	<script src="resources/js/lib/jquery-1.7.2.min.js"></script>
+	<!--
+	<script>jQuery.noConflict();</script>
+	-->
+	<script src="foundation/javascripts/foundation.js"></script>
+	<script src="foundation/javascripts/app.js"></script>
+	<script src="Downloadify/js/swfobject.js"></script>
+	<script src="Downloadify/js/downloadify.min.js"></script>
 </head>
 <body>
 	<!-- container -->
@@ -184,7 +192,7 @@
 <textarea class="brush: xml has-tip tip-top" id="xml-code" readonly="readonly" title="click to select all">
 <!-- Add some frames. -->
 </textarea>
-<span class="blue radius label downloadify" data-filename="XML.xml" rel="xml-code">download</span>
+<div class="downloadify" data-filename=".xml" rel="xml-code">download</div>
 						</div>
 					</li>
 					<li id="codeJSPTab">
@@ -192,7 +200,7 @@
 <textarea class="brush: xml has-tip tip-top" id="jsp-code" readonly="readonly" title="click to select all">
 &lt;%-- Add some frames. --%&gt;
 </textarea>
-<span class="blue radius label downloadify" data-filename="JSP.jsp" rel="jsp-code">download</span>
+<div class="downloadify" data-filename=".jsp" rel="jsp-code">download</div>
 						</div>
 					</li>
 					<li id="codeSQLTab">
@@ -200,7 +208,7 @@
 <textarea class="brush: sql has-tip tip-top" id="sql-code" readonly="readonly" title="click to select all">
 -- Add some frames.
 </textarea>
-<span class="blue radius label downloadify" data-filename="SQL.sql" rel="sql-code">download</span>
+<div class="downloadify" data-filename=".sql" rel="sql-code">download</div>
 						</div>
 					</li>
 				</ul>
@@ -217,31 +225,36 @@
 		</div>
 	</div>
 	<!-- container -->
-	<!-- Included JS Files -->
-	<script src="resources/js/lib/jquery-1.7.2.min.js"></script>
-	<!-- Combine and Compress These JS Files -->
-	<script src="foundation/javascripts/foundation.js"></script>
-	<script src="foundation/javascripts/app.js"></script>
-	<!-- End Combine and Compress These JS Files -->
-	<a href="https://github.com/NKjoep/EntandoPageModelsBuilder/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/camo.github.com/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
-
-	<script src="Downloadify/js/swfobject.js"></script>
-	<script src="Downloadify/js/downloadify.min.js"></script>
-	<!--
 	<script type="text/javascript">
 		jQuery(document).ready(function(){
 			jQuery(".downloadify").downloadify({
-				width: jQuery(".downloadify").width()+"px",
-				height: jQuery(".downloadify").height()+"px",
+				width: 100,
+				height: 30,
 				filename: function(){
-					return jQuery(this.el).attr("data-filename");
+					return jQuery('#code').val()+jQuery(this.el).attr("data-filename");
 				},
-				data: function(){ 
-					return jQuery("#"+jQuery(this.el).attr("rel")).val();
+				data: function(){
+					var extension = jQuery(this.el).attr("data-filename");
+					var comment = null;
+					if(/.*\.jsp$/.test(extension)) {
+						comment = '<%-- --%>';
+					}
+					else if (/.*\.xml$/.test(extension)) {
+						comment = '<!-- -->';
+					}
+					else {
+						comment = '-- ';
+					}
+					comment = comment.replace(' ', ' Pagemodel: '+
+						jQuery('#code').val() +', '+
+						jQuery('#title').val() +', '+
+						jQuery('#plugincode').val())+ ' ';
+					comment = comment + '\n\n';
+					return comment+jQuery("#"+jQuery(this.el).attr("rel")).val();
 				},
-				onComplete: function(){ console.log('Your File Has Been Saved!'); },
-				onCancel: function(){ console.log('You have cancelled the saving of this file.'); },
-				onError: function(){ console.log('You must put something in the File Contents or there will be nothing to save!'); },
+				onComplete: function(){ /*console.log('Your File Has Been Saved!');*/ },
+				onCancel: function(){ /*console.log('You have cancelled the saving of this file.');*/ },
+				onError: function(){ /*console.log('You must put something in the File Contents or there will be nothing to save!');*/ },
 				swf: 'Downloadify/media/downloadify.swf',
 				downloadImage: 'Downloadify/images/download.png',
 				transparent: true,
@@ -249,6 +262,6 @@
 			});
 		});
 	</script>
-	-->
+	<a href="https://github.com/NKjoep/EntandoPageModelsBuilder/"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/camo.github.com/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
 </body>
 </html>

@@ -51,9 +51,9 @@ a.action-delete:hover {
 	font-weight: bold;
 	font-size: 14px;
 	width: 100%;
-	height: 220px;
+	height: 360px;
 	background-color: transparent;
-	border: 0px solid #fff;
+	border: 0px;
 	margin-bottom: 0;
 	cursor: pointer;
 }
@@ -190,4 +190,16 @@ a.label.blue:focus {
 
 td.main input {
 	cursor: pointer;
+}
+
+.downloadify {
+	width: 90%;
+	padding: 4px 0;
+	margin: 1.5em 0 0.25em 0;
+	text-align: left;
+}
+
+.downloadify object {
+	width: 100px;
+	height: 30px;
 }
