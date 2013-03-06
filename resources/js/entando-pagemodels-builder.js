@@ -128,7 +128,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			code: this.code,
 			plugincode: this.plugincode,
 			xml: this.options.code.xml.get("value"),
-			date: (date.getDate()<10?"0"+date.getDate() : date.getDate()) + "/" + (date.getMonth()<10?"0"+date.getMonth() : date.getMonth()) + "/" + date.getFullYear() + " " + (date.getHours()<10?"0"+date.getHours() : date.getHours()) + ":" + (date.getMinutes()<10?"0"+date.getMinutes() : date.getMinutes()) + ":" + (date.getSeconds()<10?"0"+date.getSeconds() : date.getSeconds())
+			date: (date.getDate()<10?"0"+date.getDate() : date.getDate()) + "/" + (date.getMonth()<10?"0"+(date.getMonth()+1) : date.getMonth()+1) + "/" + date.getFullYear() + " " + (date.getHours()<10?"0"+date.getHours() : date.getHours()) + ":" + (date.getMinutes()<10?"0"+date.getMinutes() : date.getMinutes()) + ":" + (date.getSeconds()<10?"0"+date.getSeconds() : date.getSeconds())
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
 		this.createSavedModelButtonLoader(this.storedModels[this.code]);
