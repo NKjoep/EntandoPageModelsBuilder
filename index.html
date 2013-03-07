@@ -121,6 +121,8 @@
 											<option value="18">18 frames</option>
 											<option value="19">19 frames</option>
 											<option value="20">20 frames</option>
+											<option value="50">50 frames</option>
+											<option value="100">100 frames</option>
 										</select>
 									</p>
 									<p>
@@ -155,6 +157,15 @@
 					<button id="save" class="blue nice button radius">Save</button>
 					<span class="white radius label" style="display: none;" id="template-message-saved">Saved!</span>
 				</div>
+				<div class="row">
+					<hr />
+					<div class="row localStorage-disabled" id="saved-models">
+						<h3>Saved Page Models</h3>
+						<p class="remove">
+							Saved Page Models remains in the browser cache. If you close the page your work won't be lost.
+						</p>
+					</div>
+				</div>
 			</div>
 			<div class="eight columns">
 				<dl class="tabs contained">
@@ -172,6 +183,7 @@
 									<th>Description</th>
 									<th class="one icons has-tip tip-top" title="Main">M</th>
 									<th class="one icons has-tip tip-top" title="Default Showlet">S</th>
+									<th class="one icons has-tip tip-top" title="Locked">L</th>
 									<th class="one icons has-tip tip-top" title="Move Up">U</th>
 									<th class="one icons has-tip tip-top" title="Move Down">D</th>
 									<th class="one icons has-tip tip-top" title="Delete">X</th>
@@ -183,6 +195,7 @@
 									<td class="description" title="double click to edit">Untitled Frame</td>
 									<td class="main"><input type="checkbox" name="main-frame" /></td>
 									<td class="default-showlet"><input type="checkbox" name="default-showlet"  value="" /></td>
+									<td class="locked-showlet"><input type="checkbox" name="locked-showlet"  value="" /></td>
 									<td class="one icons moveup"><a href="#action:up" class="action-up green radius label">&uArr;</a></td>
 									<td class="one icons movedown"><a href="#action:down" class="action-down green radius label">&dArr;</a></td>
 									<td class="one icons delete"><a href="#action:delete" class="action-delete red radius label" title="Delete">x</a></td>
@@ -223,15 +236,6 @@
 						</div>
 					</li>
 				</ul>
-			</div>
-		</div>
-		<div class="row">
-			<hr />
-			<div class="row localStorage-disabled" id="saved-models">
-				<h3>Saved Page Models</h3>
-				<p class="remove">
-					Saved Page Models remains in the browser cache. If you close the page your work won't be lost.
-				</p>
 			</div>
 		</div>
 	</div>

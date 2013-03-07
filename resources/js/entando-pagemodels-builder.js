@@ -22,7 +22,8 @@ var NewEntandoPageModelsBuilder = new Class({
 			tr: document.getElement(".preview-table").getElement(".preview-sample"),	
 			message: document.getElement(".preview-table").getNext("p"),
 			mainframe_selector: '[name="main-frame"]',
-			default_showlet_selector: '[name="default-showlet"]'
+			default_showlet_selector: '[name="default-showlet"]',
+			locked_showlet_selector: '[name="locked-showlet"]'
 		};
 		this.options.code = {
 			xml: document.id("xml-code"),
@@ -462,6 +463,14 @@ var NewEntandoPageModelsBuilder = new Class({
 				this.refreshSQL();
 			}
 		}.bind(this));
+		this.options.preview.tbody.addEvent("change:relay("+this.options.preview.locked_showlet_selector+")", function(ev){
+			var status = ev.target.get("checked");
+			this.options.preview.tbody.getElements(this.options.preview.locked_showlet_selector).set("checked", false);
+			ev.target.set("checked", status);
+			this.refreshXML();
+			this.refreshJSP();
+			this.refreshSQL();
+		}.bind(this));
 	},
 	prepareAddSingleFrame: function() {
 		this.options.addframes.addSingle.addEvent("click", function(ev){
@@ -769,7 +778,13 @@ var NewEntandoPageModelsBuilder = new Class({
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
 			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
-			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
+			var locked = tr.getElement(this.options.preview.locked_showlet_selector);
+			if (locked.get("checked")) {
+				string = string + '\n\t<frame pos="'+pos+'"'+main+' locked="true">';
+			} 
+			else {
+				string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
+			}
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			if(defaultShowlet.get("checked")) {
 				string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
@@ -795,7 +810,14 @@ var NewEntandoPageModelsBuilder = new Class({
 			else { 
 				defaultShowlet = ""; 
 			}
-			string = string + '<%-- '+pos+'. '+description+main+' '+defaultShowlet+'--%>\n';
+			var locked = tr.getElement(this.options.preview.locked_showlet_selector);
+			if (locked.get("checked")) {
+				locked = 'locked';	
+			}
+			else {
+				locked = null;
+			}
+			string = string + '<%-- '+pos+'. '+description+main+' '+defaultShowlet+' '+ locked + '--%>\n';
 			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
 		}.bind(this));
 		this.options.code.jsp.set("value", string);	
@@ -810,6 +832,15 @@ var NewEntandoPageModelsBuilder = new Class({
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
 			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
+			
+			var locked = tr.getElement(this.options.preview.locked_showlet_selector);
+			if (locked.get("checked")) {
+				string = string + '\n\t<frame pos="'+pos+'"'+main+' locked="true">';
+			} 
+			else {
+				string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
+			}
+
 			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			if(defaultShowlet.get("checked")) {
