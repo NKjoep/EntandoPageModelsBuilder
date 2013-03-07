@@ -1,7 +1,6 @@
 # Entando Page Models Builder
 
 
-The easy tool to create your Page Models in a click.
+The easy tool to create your [Entando](http://www.entando.org/) Page Models in a click.
 
-
-http://nkjoep.github.com/EntandoPageModelsBuilder/
+Live: http://nkjoep.github.com/EntandoPageModelsBuilder/
