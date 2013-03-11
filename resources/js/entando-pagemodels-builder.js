@@ -840,8 +840,6 @@ var NewEntandoPageModelsBuilder = new Class({
 			else {
 				string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			}
-
-			string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			if(defaultShowlet.get("checked")) {
 				string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
