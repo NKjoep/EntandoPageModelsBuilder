@@ -17,9 +17,9 @@ var NewEntandoPageModelsBuilder = new Class({
 			message: document.id("template-message-xml-load")
 		}
 		this.options.preview = {
-			table: document.getElement(".preview-table"), 
-			tbody: document.getElement(".preview-table").getElement(".preview-tbody"), 
-			tr: document.getElement(".preview-table").getElement(".preview-sample"),	
+			table: document.getElement(".preview-table"),
+			tbody: document.getElement(".preview-table").getElement(".preview-tbody"),
+			tr: document.getElement(".preview-table").getElement(".preview-sample"),
 			message: document.getElement(".preview-table").getNext("p"),
 			mainframe_selector: '[name="main-frame"]',
 			default_showlet_selector: '[name="default-showlet"]',
@@ -32,14 +32,15 @@ var NewEntandoPageModelsBuilder = new Class({
 		};
 		this.options.saveArea = {
 			saveButton: document.id("save"),
-			saveMessage: document.id("template-message-saved"), 
+			saveMessage: document.id("template-message-saved"),
 			savedModelsContainer: document.id("saved-models"),
 			disabledElementsWhenNoStorage: document.getElements(".localStorage-disabled")
 		};
 		this.options.metaData = {
 			title: document.id("title"),
 			code: document.id("code"),
-			plugincode: document.id("plugincode")
+			plugincode: document.id("plugincode"),
+			compat: document.id('compat')
 		};
 		this.setOptions();
 		this.setupMetaData();
@@ -129,6 +130,7 @@ var NewEntandoPageModelsBuilder = new Class({
 			code: this.code,
 			plugincode: this.plugincode,
 			xml: this.options.code.xml.get("value"),
+			compat: this.options.metaData.compat.get('value'),
 			date: (date.getDate()<10?"0"+date.getDate() : date.getDate()) + "/" + (date.getMonth()<10?"0"+(date.getMonth()+1) : date.getMonth()+1) + "/" + date.getFullYear() + " " + (date.getHours()<10?"0"+date.getHours() : date.getHours()) + ":" + (date.getMinutes()<10?"0"+date.getMinutes() : date.getMinutes()) + ":" + (date.getSeconds()<10?"0"+date.getSeconds() : date.getSeconds())
 		};
 		window.localStorage.setItem("entando-page-models-builder-config", JSON.encode(this.storedModels));
@@ -177,10 +179,11 @@ var NewEntandoPageModelsBuilder = new Class({
 	loadStoredModel: function(code) {
 		var modelObj = this.storedModels[code];
 		if (modelObj!==undefined) {
-			this.insertFramesFromXml(modelObj.xml);
+			this.insertFramesFromXml(modelObj.xml, modelObj.compat);
 			this.options.metaData.title.set("value", modelObj.title);
 			this.options.metaData.code.set("value", modelObj.code);
 			this.options.metaData.plugincode.set("value", (modelObj.plugincode=='NULL'? "" : modelObj.plugincode));
+			this.options.metaData.compat.set('value', (modelObj.compat == '3' || modelObj.compat == 3 || modelObj.compat == null || modelObj.compat == undefined ? '3' : '4'));
 			this.title=modelObj.title;
 			this.code=modelObj.code;
 			this.plugincode=modelObj.plugincode;
@@ -244,6 +247,10 @@ var NewEntandoPageModelsBuilder = new Class({
 				this.refreshSQL();
 			}
 		}.bind(this));
+		this.options.metaData.compat.addEvent('change', function(ev){
+			this.refreshSQL();
+			this.refreshXML();
+		}.bind(this))
 	},
 	prepareAddFrames: function() {
 		this.options.addframes.form.addEvent("submit", function(ev){ev.preventDefault()});
@@ -423,7 +430,7 @@ var NewEntandoPageModelsBuilder = new Class({
 						}.bind(input)
 					}
 				}).inject(td);
-			}		
+			}
 		}.bind(this));
 		this.options.preview.tbody.addEvent("mousedown:relay(.description)", function(ev) {
 			ev.target.getParent("tr").addClass("while-mousedown");
@@ -465,7 +472,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		}.bind(this));
 		this.options.preview.tbody.addEvent("change:relay("+this.options.preview.locked_showlet_selector+")", function(ev){
 			var status = ev.target.get("checked");
-			this.options.preview.tbody.getElements(this.options.preview.locked_showlet_selector).set("checked", false);
+			//this.options.preview.tbody.getElements(this.options.preview.locked_showlet_selector).set("checked", false);
 			ev.target.set("checked", status);
 			this.refreshXML();
 			this.refreshJSP();
@@ -501,13 +508,13 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.refreshPreviewPositions(position+howmany);
 		this.refreshAll();
 	},
-	createNewFrame: function(description, position, index, romanizedCounter, main, defaultShowlet) {
+	createNewFrame: function(description, position, index, romanizedCounter, main, defaultShowlet, locked) {
 		if (this.options.preview.disabled) {
 			this.options.preview.table.setStyle("display", "");
 			this.options.preview.message.setStyle("display", "");
 			$(window).trigger('resize');
 			this.options.preview.disabled=false;
-		} 
+		}
 		var tr = this.options.preview.tr.clone();
 		var tds = tr.getElements("td");
 		description = (description !== undefined && description.length > 0) ? description : tds[1].get("text");
@@ -543,6 +550,9 @@ var NewEntandoPageModelsBuilder = new Class({
 			tr.getElement(this.options.preview.default_showlet_selector).set("checked", true);
 			tr.getElement(this.options.preview.default_showlet_selector).set("value", defaultShowlet);
 		}
+		if (locked!==undefined&&locked==true) {
+			tr.getElement(this.options.preview.locked_showlet_selector).set('checked', true);
+		}
 		return tr;
 	},
 	setupSortable: function() {
@@ -562,7 +572,8 @@ var NewEntandoPageModelsBuilder = new Class({
 			}.bind(this)
 		});
 	},
-	insertFramesFromXml: function(wantedXml) {
+	insertFramesFromXml: function(wantedXml, compat) {
+
 		var xml;
 		if (wantedXml!==undefined) {
 			xml = wantedXml;
@@ -570,6 +581,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		else {
 			xml = this.options.loadxml.xml.get("value").trim();
 		}
+		var compat = (compat !== undefined ? compat : this.options.metaData.compat.get('value'))
 		var rootFromString = function rootFromString(string) {
 			var root = null;
 			try {
@@ -600,7 +612,13 @@ var NewEntandoPageModelsBuilder = new Class({
 						var pos = child.getAttribute("pos");
 						var descr = child.getElementsByTagName("descr");
 						var main = child.getAttribute("main");
-						var defaultShowlet = child.getElementsByTagName("defaultShowlet");
+						var locked = child.getAttribute('locked');
+						if (compat === undefined || compat == '3') {
+							var defaultShowlet = child.getElementsByTagName("defaultShowlet");
+						}
+						else {
+							var defaultShowlet = child.getElementsByTagName("defaultWidget");
+						}
 						if (descr!==undefined) {
 							descr = descr[0];
 						}
@@ -623,6 +641,12 @@ var NewEntandoPageModelsBuilder = new Class({
 						else {
 							main = false;
 						}
+						if (locked === 'true') {
+							locked = true;
+						}
+						else {
+							locked = false;
+						}
 						var defaultShowletCode = "";
 						if (defaultShowlet!==undefined) {
 							defaultShowlet = defaultShowlet[0];
@@ -633,6 +657,7 @@ var NewEntandoPageModelsBuilder = new Class({
 								}
 							}
 						}
+
 							pos = pos.trim().replace(/[\n\r\ta-zA-Z]/g,"");
 							if (pos.length>0) {
 								pos = new Number(pos).valueOf();
@@ -647,7 +672,8 @@ var NewEntandoPageModelsBuilder = new Class({
 									pos: pos,
 									descr: descr,
 									main: main,
-									defaultShowlet: defaultShowletCode 
+									defaultShowlet: defaultShowletCode,
+									locked: locked
 								};
 							}
 							else {
@@ -658,12 +684,13 @@ var NewEntandoPageModelsBuilder = new Class({
 									pos: index,
 									descr: descr,
 									main: main,
-									defaultShowlet: defaultShowletCode 
+									defaultShowlet: defaultShowletCode,
+									locked: locked
 								});
 							}
 					});
 					obj.frames = obj.frames.sort(function(a,b){
-						var a = new Number(a.pos).valueOf(); 
+						var a = new Number(a.pos).valueOf();
 						var b = new Number(b.pos).valueOf();
 						if (a!==NaN&&b!==NaN) return a-b;
 						if (a==NaN&&b!==NaN) return b;
@@ -674,7 +701,7 @@ var NewEntandoPageModelsBuilder = new Class({
 							if (framesWithNoValidPos[0]!==undefined) {
 								obj.frames[i] = framesWithNoValidPos[0];
 								framesWithNoValidPos.shift();
-							} 
+							}
 							else {
 								break;
 							}
@@ -687,7 +714,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.options.preview.tbody.empty();
 		var frames = extractFrames(xml).frames;
 		Array.each(frames, function(item, index){
-			this.createNewFrame(item.descr, index, undefined, false, item.main, item.defaultShowlet);
+			this.createNewFrame(item.descr, index, undefined, false, item.main, item.defaultShowlet, item.locked);
 		}.bind(this));
 		this.refreshAll();
 	},
@@ -769,6 +796,7 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.setupSortable();
 	},
 	refreshXML: function() {
+		var compat = this.options.metaData.compat.get('value');
 		var string = "<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
@@ -781,13 +809,18 @@ var NewEntandoPageModelsBuilder = new Class({
 			var locked = tr.getElement(this.options.preview.locked_showlet_selector);
 			if (locked.get("checked")) {
 				string = string + '\n\t<frame pos="'+pos+'"'+main+' locked="true">';
-			} 
+			}
 			else {
 				string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			}
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			if(defaultShowlet.get("checked")) {
-				string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
+				if (compat == '3' || compat == null || compat == undefined) {
+					string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
+				}
+				else {
+					string = string + '\n\t\t<defaultWidget code="'+defaultShowlet.get("value")+'" />';
+				}
 			}
 			string = string + "\n\t</frame>";
 		}.bind(this));
@@ -795,7 +828,8 @@ var NewEntandoPageModelsBuilder = new Class({
 		this.options.code.xml.set("value", string);
 	},
 	refreshJSP: function() {
-		var string = '<%@ taglib prefix="wp" uri="/aps-core" %>\n\n';
+		var string = '<%@ taglib prefix="wp" uri="/aps-core" %>\n<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>\n<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>\n<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>\n<!DOCTYPE html>\n<html lang="<wp:info key="currentLang" />">\n\n<head>\n  <title>\n    <wp:currentPage param="title" /> - <wp:i18n key="PORTAL_TITLE" />\n  </title>\n  <%-- use this include if you are using bundles \n    <jsp:include page="inc/models-common-utils.jsp" />\n  --%>\n</head>\n\n<body>\n';
+
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
 			var pos = tr.getElement(".position").get("text");
@@ -807,22 +841,26 @@ var NewEntandoPageModelsBuilder = new Class({
 			if(defaultShowlet.get("checked")) {
 				defaultShowlet = "("+defaultShowlet.get("value")+")";
 			}
-			else { 
-				defaultShowlet = ""; 
+			else {
+				defaultShowlet = "";
 			}
 			var locked = tr.getElement(this.options.preview.locked_showlet_selector);
 			if (locked.get("checked")) {
-				locked = 'locked';	
+				locked = 'locked';
 			}
 			else {
-				locked = null;
+				locked = '';
 			}
-			string = string + '<%-- '+pos+'. '+description+main+' '+defaultShowlet+' '+ locked + '--%>\n';
-			string = string + '\t<wp:show frame="'+pos+'" />\n\n';
+			string = string + '  <%-- '+pos+'. '+description+main+' '+defaultShowlet+' '+ locked + '--%>\n';
+			string = string + '    <wp:show frame="'+pos+'" />\n';
 		}.bind(this));
-		this.options.code.jsp.set("value", string);	
+
+		string = string + '</body>\n\n</html>';
+
+		this.options.code.jsp.set("value", string);
 	},
 	refreshSQL: function() {
+		var compat = this.options.metaData.compat.get('value');
 		var string = "-- DELETE FROM pagemodels where code = '"+this.code+"';\n\nINSERT INTO pagemodels (code, descr, frames, plugincode)\n\tVALUES ('"+this.code+"', '"+this.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'")+"', '<frames>";
 		Array.each(this.options.preview.tbody.getElements("tr"), function(tr) {
 			var tds = tr.getElements("td");
@@ -832,38 +870,43 @@ var NewEntandoPageModelsBuilder = new Class({
 			description = description.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 			var main = tr.getElement(this.options.preview.mainframe_selector).get("checked") == true ? ' main="true"' : '';
 			var defaultShowlet = tr.getElement(this.options.preview.default_showlet_selector);
-			
+
 			var locked = tr.getElement(this.options.preview.locked_showlet_selector);
 			if (locked.get("checked")) {
 				string = string + '\n\t<frame pos="'+pos+'"'+main+' locked="true">';
-			} 
+			}
 			else {
 				string = string + '\n\t<frame pos="'+pos+'"'+main+'>';
 			}
 			string = string + '\n\t\t<descr>'+description+'</descr>';
 			if(defaultShowlet.get("checked")) {
-				string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
+				if (compat == '3' || compat == null || compat == undefined) {
+					string = string + '\n\t\t<defaultShowlet code="'+defaultShowlet.get("value")+'" />';
+				}
+				else {
+					string = string + '\n\t\t<defaultWidget code="'+defaultShowlet.get("value")+'" />';
+				}
 			}
 			string = string + "\n\t</frame>";
 		}.bind(this));
 		string = string + "\n</frames>', "+(this.plugincode=="NULL" ? this.plugincode: "'"+this.plugincode+"'")+");";
-		this.options.code.sql.set("value", string);	
+		this.options.code.sql.set("value", string);
 	}
 });
 window.addEvent("domready", function(){
 	new NewEntandoPageModelsBuilder();
 	/* temporary fix for tips nested in tabs */
 	Array.each([
-		document.getElement('a[href="#preview"]'), 
-		document.getElement('a[href="#codeXML"]'), 
-		document.getElement('a[href="#codeJSP"]'), 
+		document.getElement('a[href="#preview"]'),
+		document.getElement('a[href="#codeXML"]'),
+		document.getElement('a[href="#codeJSP"]'),
 		document.getElement('a[href="#codeSQL"]')
 		], function(item) {
 		item.addEvent("click", function(){
 			var fn = function(){
 				$(window).trigger('resize');
 			};
-			fn.delay(35);
+			fn.delay(60);
 		});
 	});
 })

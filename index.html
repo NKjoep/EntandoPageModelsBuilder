@@ -70,9 +70,16 @@
 		<div class="row">
 			<div class="twelve columns compat-rows">
 				<div class="row">
-					<p class="twelve columns">
-						Title:&#32;<input type="text" id="title" name="title" class="oversize expand input-text" placeholder="Page Model Title" />
-					</p>
+						<p class="eight columns">
+							Title:&#32;<input type="text" id="title" name="title" class="oversize expand input-text" placeholder="Page Model Title" />
+						</p>
+						<p class="four columns">
+							Compatibility:
+							<select id="compat" name="compat">
+								<option value="4" selected="selected">Entando version 4</option>
+								<option value="3">Entando version 3</option>
+							</select>
+						</p>
 				</div>
 				<div class="row">
 					<p class="six columns">
@@ -182,7 +189,7 @@
 									<th class="one has-tip tip-top" title="Position">P</th>
 									<th>Description</th>
 									<th class="one icons has-tip tip-top" title="Main">M</th>
-									<th class="one icons has-tip tip-top" title="Default Showlet">S</th>
+									<th class="one icons has-tip tip-top" title="Default Widget">W</th>
 									<th class="one icons has-tip tip-top" title="Locked">L</th>
 									<th class="one icons has-tip tip-top" title="Move Up">U</th>
 									<th class="one icons has-tip tip-top" title="Move Down">D</th>
